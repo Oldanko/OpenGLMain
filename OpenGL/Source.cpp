@@ -39,13 +39,13 @@ int main()
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
 
-	Texture grass_texture("billboardgrass.png",
+	Texture grass_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture ground_texture("ground.png",
+	Texture ground_texture("resources/ground.png",
 		GL_REPEAT, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
-	Texture box_texture("box.png",
+	Texture box_texture("resources/box.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture dendelionleaf_texture("billboardgrass.png",
+	Texture dendelionleaf_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
 	std::vector<glm::mat4> matrices;
@@ -79,19 +79,14 @@ int main()
 			glm::vec3(0.0, 0.0, 0.0),
 			glm::vec3(0.0, 1.0, 0.0));
 
-	scene.terrain.loadHeightMap("heightmap.hm");
-
 	Scene scene2;
 
-	scene2.terrain.loadHeightMap("heightmap.hm");
+	scene2.terrain.loadHeightMap("resources/heightmap.hm");
 	scene2.SunDirection = glm::vec3(1, 1, 1);
 
 	scene2.solidObjects.push_back(new Node(box, box_texture,
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
 
-
-//	scene2.solidObjects.push_back(new Node(ground, box_texture,
-//		glm::vec3(0, 2, 0), glm::vec3(0), glm::vec3(512)));
 
 
 	scene2.lightMatrix =
