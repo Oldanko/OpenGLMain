@@ -1,0 +1,15 @@
+#version 330 core
+
+layout(location = 0) in vec2 position;
+layout(location = 1) in float height;
+layout(location = 2) in vec3 normal;
+
+out vec3 Normal;
+
+uniform mat4 MVP;
+
+void main()
+{	
+	gl_Position = MVP*vec4(position.x, height, position.y, 1);
+	Normal = normalize(normal);
+}
