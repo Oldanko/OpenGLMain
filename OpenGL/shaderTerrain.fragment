@@ -3,6 +3,7 @@
 out vec4 outColor;
 
 in vec3 Normal;
+in float Height;
 uniform vec3 lightDirection;
 
 void main()
@@ -13,20 +14,35 @@ void main()
 
 	vec3 grassland = vec3(57/255.0, 108/255.0, 8/255.0); 
 	vec3 rock = vec3(120/255.0, 120/255.0, 120/255.0);
+	vec3 bottom = vec3(58/255.0, 37/255.0, 30/255.0);
 
-	vec3 color = grassland * slope;
+	vec3 color = grassland;
 
 	float slopeMin = 0.98;
 	float slopeMax = 0.95;
 
-	if(slope < slopeMax)
-		color = rock * slope;
+	float bottomMin = 1.35;
+	float bottomMax = 2.0;
+
+
+	if(Height < bottomMin)
+		color = bottom;
+	
+	else if(Height < bottomMax)
+	{
+		float k = (Height - bottomMin)/(bottomMax - bottomMin);
+		color = (grassland * k + bottom * (1 - k));
+	}
+	
+	else if(slope < slopeMax)
+		color = rock;
+	
 	else if(slope < slopeMin)
 	{
 		float k = (slope - slopeMax)/(slopeMin-slopeMax);
-		color = (grassland * k + rock * (1 - k)) * slope;
+		color = (grassland * k + rock * (1 - k));
 	}
 
-	outColor = vec4(power*color, 1.0f);
+	outColor = vec4(0.8*power*color + 0.2*color, 1.0f);
 	//outColor = vec4(vec3(power), 1.0);
 }

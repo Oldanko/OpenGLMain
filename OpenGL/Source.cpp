@@ -41,12 +41,16 @@ int main()
 
 	Texture grass_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	Texture grass1_texture("resources/grass_a.png",
+		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	Texture ground_texture("resources/ground.png",
 		GL_REPEAT, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
 	Texture box_texture("resources/box.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	Texture dendelionleaf_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+
+	
 
 	std::vector<glm::mat4> matrices;
 
@@ -97,7 +101,8 @@ int main()
 
 	//Plant Grass
 	matrices = std::vector<glm::mat4>(0);
-	for (int i = 0; i < 80000; i++)
+	std::vector<glm::mat4> matrices2;
+	for (int i = 0; i < 50000; i++)
 	{
 		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
@@ -111,8 +116,19 @@ int main()
 			continue;
 		}
 
-		if (h < 1.5f)
+		if (h < 2.0f || (h < 2.5 && rand() % 2 == 0))
 		{
+			if (h > 1.0 || (h > 0.8 && rand() % 2 == 0))
+			{
+				glm::mat4 matrix =
+					glm::translate(glm::vec3(x, h, y)) *
+					glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
+					glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
+					glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
+					glm::scale(glm::vec3(8.0, 8.0, 8.0));
+				matrices2.push_back(matrix);
+				continue;
+			}
 			i--;
 			continue;
 		}
@@ -126,6 +142,7 @@ int main()
 		matrices.push_back(matrix);
 	}
 	scene2.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
+	scene2.grass.push_back(new NodeInstansed(grass, grass1_texture, matrices2));
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
@@ -141,11 +158,13 @@ int main()
 
 	scene2.solidObjectsInstanced.push_back(new NodeInstansed(box, box_texture, matrices));
 
+	scene2.water = new Water(glm::vec2(0), glm::vec2(512), 1.4f);
+
 	Scene * theScene = &scene2;
 
 	do
 	{
-		RenderEngine::drawShaded(*theScene);
+		RenderEngine::draw(*theScene);
 		Controls::update();
 		scene2.camera.update();
 

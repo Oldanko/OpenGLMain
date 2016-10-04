@@ -20,6 +20,7 @@ class Camera
 public:
 	glm::mat4 ViewMatrix();
 	void calculateViewMatrix();
+	const glm::vec3 position();
 	const glm::vec3 cameraLocalPosition();
 	const glm::vec3 cameraGlobalPosition();
 	const glm::vec3 cameraDirection();

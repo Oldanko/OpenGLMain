@@ -9,7 +9,6 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-
 	for (int i = 0; i < solidObjects.size(); i++)
 		delete solidObjects[i];
 	for (int i = 0; i < solidObjectsInstanced.size(); i++)
@@ -18,4 +17,5 @@ Scene::~Scene()
 		delete glowingObjects[i];
 	for (int i = 0; i < grass.size(); i++)
 		delete grass[i];
+	delete water;
 }

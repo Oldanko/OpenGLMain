@@ -76,7 +76,6 @@ void RenderEngine::renderShadowMap(Scene & scene)
 
 	glUseProgram(ShaderManager::programDepth);
 
-	//glCullFace(GL_FRONT);
 	for (int i = 0; i < scene.solidObjects.size(); i++)
 	{
 		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programDepth, "MVP"), 1, GL_FALSE, &(scene.lightMatrix*scene.solidObjects[i]->getModelMatrix())[0][0]);
@@ -90,12 +89,12 @@ void RenderEngine::renderShadowMap(Scene & scene)
 	{
 		scene.solidObjectsInstanced[i]->draw();
 	}
-	//glCullFace(GL_BACK);
-
 	glUseProgram(ShaderManager::programTerrainDepth);
 	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programTerrainDepth, "VP"), 1, GL_FALSE, &scene.lightMatrix[0][0]);
 	scene.terrain.draw();
 
+
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -143,7 +142,10 @@ void RenderEngine::draw(Scene & scene)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+	glClearColor(11/ 255.0, 176/ 255.0, 226 / 255.0, 1.0);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	glm::mat4 VP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
 
@@ -168,6 +170,11 @@ void RenderEngine::draw(Scene & scene)
 
 	renderTerrain(scene, VP, false);
 
+	glDisable(GL_CULL_FACE);
+	glUseProgram(ShaderManager::programWater);
+	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &VP[0][0]);
+	scene.water->draw();
+	glEnable(GL_CULL_FACE);
 }
 
 void RenderEngine::drawShaded(Scene & scene)
@@ -183,6 +190,8 @@ void RenderEngine::drawShaded(Scene & scene)
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -225,6 +234,12 @@ void RenderEngine::drawShaded(Scene & scene)
 	}
 		
 	renderTerrain(scene, MVP, true);
+
+	glDisable(GL_CULL_FACE);
+	glUseProgram(ShaderManager::programWater);
+	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &MVP[0][0]);
+	scene.water->draw();
+	glEnable(GL_CULL_FACE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -26,6 +26,11 @@ void Camera::calculateViewMatrix()
 	}
 }
 
+const glm::vec3 Camera::position()
+{
+	return m_position;
+}
+
 const glm::vec3 Camera::cameraLocalPosition()
 {
 	return m_cameraPosition;

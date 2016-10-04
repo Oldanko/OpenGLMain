@@ -57,6 +57,9 @@
     <ClCompile Include="RenderEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,6 +158,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shaderTerrainShadow.fragment">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaderWater.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaderWater.fragment">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

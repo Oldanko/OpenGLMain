@@ -1,0 +1,17 @@
+#version 330 core
+
+in vec2 TexCoord;
+in vec3 Normal;
+
+out vec4 outColor;
+
+uniform sampler2D reflection;
+
+void main()
+{
+
+	vec3 color = texture(reflection, TexCoord).rgb;
+		
+	outColor = vec4(19/255.0, 32/255.0, 61/255.0, 0.7);
+	//outColor = vec4(color, 0.7);
+	}
