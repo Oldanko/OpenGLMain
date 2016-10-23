@@ -9,8 +9,8 @@ out vec4 outColor;
 
 uniform sampler2D shadowMap;
 uniform sampler2D diffuseMap;
+uniform vec3 lightDirection;
 
-uniform vec3 lightDirection;// = normalize(vec3(1.0, 0.05, 1.0));
 
 float ShadowCalculation(vec4 fragPositionLightSpace)
 {

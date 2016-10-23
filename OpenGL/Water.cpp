@@ -125,10 +125,8 @@ void Water::bindReflectionTexture()
 	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
 }
 
-
 void Water::calculateMatrices(Camera & camera)
 {
-
 	glm::vec3 target = camera.position();
 	glm::vec3 pointOfView = camera.cameraGlobalPosition();
 
@@ -137,16 +135,12 @@ void Water::calculateMatrices(Camera & camera)
 		glm::vec3(target.x, m_height - target.y, target.z),
 		glm::vec3(0, -1, 0)
 		);
-
-
 }
 
 float Water::height()
 {
 	return m_height;
 }
-
-
 
 void Water::draw()
 {

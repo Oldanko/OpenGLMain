@@ -120,12 +120,14 @@ int main()
 		{
 			if (h > 1.0 || (h > 0.8 && rand() % 2 == 0))
 			{
+				float r = float(rand()) * 3.0 / INT_MAX;
+
 				glm::mat4 matrix =
 					glm::translate(glm::vec3(x, h, y)) *
 					glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
 					glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
 					glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
-					glm::scale(glm::vec3(8.0, 8.0, 8.0));
+					glm::scale(glm::vec3(8.0 + r, 8.0 + r, 8.0 + r));
 				matrices2.push_back(matrix);
 				continue;
 			}

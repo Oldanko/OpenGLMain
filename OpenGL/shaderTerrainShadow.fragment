@@ -8,8 +8,11 @@ in float Height;
 
 out vec4 outColor;
 
+
 uniform sampler2D shadowMap;
 uniform vec3 lightDirection;
+uniform vec2 heightTest;
+
 
 float ShadowCalculation(vec4 fragPositionLightSpace)
 {
@@ -43,6 +46,9 @@ float ShadowCalculation(vec4 fragPositionLightSpace)
 
 void main()
 {
+
+	if(heightTest.x != 0 && heightTest.y*heightTest.x > Height*heightTest.x)
+		discard;
 
 	float slope = max(dot(Normal, vec3(0.0, 1.0, 0.0)), 0.0);
 	
