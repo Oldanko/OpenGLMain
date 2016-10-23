@@ -4,6 +4,7 @@ out vec4 outColor;
 
 in vec3 Normal;
 in float Height;
+
 uniform vec3 lightDirection;
 uniform vec2 heightTest;
 

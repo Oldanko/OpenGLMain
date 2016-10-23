@@ -18,9 +18,6 @@ void RenderEngine::renderTerrain(Scene &scene, glm::mat4 &matrix, bool shadow)
 
 	glUseProgram(*program);
 
-	if (shadow)
-		glUniformMatrix4fv(glGetUniformLocation(*program, "lightMatrix"), 1, GL_FALSE, &scene.lightMatrix[0][0]);
-
 	scene.water ?
 		glUniform2f(glGetUniformLocation(*program, "heightTest"), 1, scene.water->height())
 		:
@@ -28,6 +25,14 @@ void RenderEngine::renderTerrain(Scene &scene, glm::mat4 &matrix, bool shadow)
 
 	glUniform3f(glGetUniformLocation(*program, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
 	glUniformMatrix4fv(glGetUniformLocation(*program, "MVP"), 1, GL_FALSE, &matrix[0][0]);
+
+	if (shadow)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(*program, "lightMatrix"), 1, GL_FALSE, &scene.lightMatrix[0][0]);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+	}
+
 	scene.terrain.draw();
 }
 
@@ -68,6 +73,54 @@ void RenderEngine::renderInstanced(Scene & scene, glm::mat4 & matrix, bool shado
 	glEnable(GL_CULL_FACE);
 }
 
+void RenderEngine::renderSolids(Scene & scene, glm::mat4 & matrix, bool shadow)
+{
+	GLuint *program;
+
+	shadow ?
+		program = &ShaderManager::programShadow
+		:
+		program = &ShaderManager::program;
+
+
+	glUseProgram(*program);
+	glUniform3f(glGetUniformLocation(*program, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
+	
+	if (shadow)
+	{
+		glUniform1i(glGetUniformLocation(*program, "shadowMap"), 0);
+		glUniform1i(glGetUniformLocation(*program, "diffuseMap"), 1);
+
+		glUniformMatrix4fv(glGetUniformLocation(*program, "lightMatrix"), 1, GL_FALSE, &(scene.lightMatrix)[0][0]);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glActiveTexture(GL_TEXTURE1);
+	}
+
+	for (int i = 0; i < scene.solidObjects.size(); i++)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(*program, "VP"), 1, GL_FALSE, &matrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(*program, "modelMatrix"), 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
+		scene.solidObjects[i]->draw();
+	}
+
+}
+
+void RenderEngine::renderGlow(Scene & scene, glm::mat4 matrix)
+{
+
+	glUseProgram(ShaderManager::programGlow);
+	glUniform3f(glGetUniformLocation(ShaderManager::programGlow, "lightColor"), 3.0, 3.0, 3.0);
+
+	glActiveTexture(GL_TEXTURE0);
+
+	for (int i = 0; i < scene.glowingObjects.size(); i++)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programGlow, "MVP"), 1, GL_FALSE, &(matrix* scene.glowingObjects[i]->getModelMatrix())[0][0]);
+		scene.glowingObjects[i]->draw();
+	}
+}
+
 void RenderEngine::renderShadowMap(Scene & scene)
 {
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
@@ -101,6 +154,19 @@ void RenderEngine::renderShadowMap(Scene & scene)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glCullFace(GL_BACK);
+}
+
+void RenderEngine::renderWater(Scene & scene, glm::mat4 & matrix, bool shadow)
+{
+	if (scene.water)
+	{
+		glUseProgram(ShaderManager::programWater);
+		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &matrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, scene.water->m_reflectionTex);
+		scene.water->draw();
+	}
 }
 
 void RenderEngine::init()
@@ -140,31 +206,45 @@ void RenderEngine::terminate()
 
 void RenderEngine::draw(Scene & scene)
 {
-	// Water FBO test
-	glViewport(0, 0, 1280, 720);
 
-	glm::mat4 MVP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
+	if (scene.water)
+	{
+		// Water FBO test
+		glViewport(0, 0, 1280, 720);
 
-	scene.water->bindFrameBuffer();
+		glm::mat4 MVP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+		scene.water->bindFrameBuffer();
 
-	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
 
-	glUseProgram(ShaderManager::programTerrain);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUniform3f(glGetUniformLocation(ShaderManager::programTerrain, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
-	glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 0, scene.water->height()); // change 0 to 1 to render above water
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programTerrain, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+		glUseProgram(ShaderManager::programTerrain);
+
+		glUniform1f(glGetUniformLocation(ShaderManager::programTerrain, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1, scene.water->height());
+		renderTerrain(scene, MVP, false);
+		glUniform1f(glGetUniformLocation(ShaderManager::programTerrain, "heightOffset"), 0);
+
+		glUseProgram(ShaderManager::programInstanced);
+		glUniform1f(glGetUniformLocation(ShaderManager::programInstanced, "heightOffset"), -scene.water->height());
+		renderInstanced(scene, MVP, false);
+		glUniform1f(glGetUniformLocation(ShaderManager::programInstanced, "heightOffset"), 0);
+
+
+		glUseProgram(ShaderManager::program);
+		glUniform1f(glGetUniformLocation(ShaderManager::program, "heightOffset"), -scene.water->height());
+		renderSolids(scene, MVP, false);
+		glUniform1f(glGetUniformLocation(ShaderManager::program, "heightOffset"), 0);
+
+	}
 	
-
-	scene.terrain.draw();
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//End Water FBO test
 
@@ -179,50 +259,26 @@ void RenderEngine::draw(Scene & scene)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	glm::mat4 VP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
 
-	glUseProgram(ShaderManager::program);
-	glUniform3f(glGetUniformLocation(ShaderManager::program, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
-	for (int i = 0; i < scene.solidObjects.size(); i++)
-	{
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::program, "MVP"), 1, GL_FALSE, &(VP*scene.solidObjects[i]->getModelMatrix())[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::program, "modelMatrix"), 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
-		scene.solidObjects[i]->draw();
-	}
-
+	renderSolids(scene, VP, false);
 	renderInstanced(scene, VP, false);
-
-	glUseProgram(ShaderManager::programGlow);
-	glUniform3f(glGetUniformLocation(ShaderManager::programGlow, "lightColor"), 3.0, 3.0, 3.0);
-	for (int i = 0; i < scene.glowingObjects.size(); i++)
-	{
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programGlow, "MVP"), 1, GL_FALSE, &(VP* scene.glowingObjects[i]->getModelMatrix())[0][0]);
-		scene.glowingObjects[i]->draw();
-	}
-
+	renderGlow(scene, VP);
 	renderTerrain(scene, VP, false);
-
-	glUseProgram(ShaderManager::programWater);
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &VP[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
-	scene.water->bindReflectionTexture();
-	scene.water->draw();
+	renderWater(scene, VP, false);
 }
 
 void RenderEngine::drawShaded(Scene & scene)
 {
 	renderShadowMap(scene);
 
-	glm::mat4 MVP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
-	//glm::mat4 MVP = scene.lightMatrix;
-
+	glm::mat4 VP;
+	
 	if (scene.water)
 	{
-		// Water FBO test
+		VP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
 
 		glViewport(0, 0, 1280, 720);
-
 
 		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo);
 
@@ -235,40 +291,21 @@ void RenderEngine::drawShaded(Scene & scene)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(ShaderManager::programTerrain);
+		glUseProgram(ShaderManager::programTerrainShadow);
+		glUniform1f(glGetUniformLocation(ShaderManager::programTerrainShadow, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programTerrainShadow, "heightTest"), 1, scene.water->height());
+		renderTerrain(scene, VP, true);
+		glUniform1f(glGetUniformLocation(ShaderManager::programTerrainShadow, "heightOffset"), 0);
 
-		glUniform3f(glGetUniformLocation(ShaderManager::programTerrain, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programTerrain, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-		glUniform1f(glGetUniformLocation(ShaderManager::programTerrain, "heightOffset"), -scene.water->height());
-		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1, scene.water->height());
-		scene.terrain.draw();
+		glUseProgram(ShaderManager::programShadow);
+		glUniform1f(glGetUniformLocation(ShaderManager::programShadow, "heightOffset"), -scene.water->height());
+		renderSolids(scene, VP, true);
+		glUniform1f(glGetUniformLocation(ShaderManager::programShadow, "heightOffset"), 0);
 
 		glUseProgram(ShaderManager::programShadowInstanced);
 		glUniform1f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightOffset"), -scene.water->height());
-		renderInstanced(scene, MVP, true);
-
-		glUseProgram(ShaderManager::programShadow);
-		glUniform3f(glGetUniformLocation(ShaderManager::programShadow, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
-
-		glUniform1i(glGetUniformLocation(ShaderManager::programShadow, "shadowMap"), 0);
-		glUniform1i(glGetUniformLocation(ShaderManager::programShadow, "diffuseMap"), 1);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE1);
-
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "lightMatrix"), 1, GL_FALSE, &(scene.lightMatrix)[0][0]);
-
-		for (int i = 0; i < scene.solidObjects.size(); i++)
-		{
-			glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "MVP"), 1, GL_FALSE, &(MVP*scene.solidObjects[i]->getModelMatrix())[0][0]);
-			glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "modelMatrix"), 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
-			//box_node.draw();
-			scene.solidObjects[i]->draw();
-		}
-
-		//End Water FBO test
+		renderInstanced(scene, VP, true);
+		glUniform1f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightOffset"), 0);
 	}
 
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
@@ -285,82 +322,15 @@ void RenderEngine::drawShaded(Scene & scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	MVP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
-	//MVP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
-	//glm::mat4 MVP = scene.lightMatrix;
-
-
+	VP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
 
 	// = = = = = = DRAW = = = = = =
-	glUseProgram(ShaderManager::programShadow);
-	glUniform3f(glGetUniformLocation(ShaderManager::programShadow, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
 
-	glUniform1i(glGetUniformLocation(ShaderManager::programShadow, "shadowMap"), 0);
-	glUniform1i(glGetUniformLocation(ShaderManager::programShadow, "diffuseMap"), 1);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-
-	glActiveTexture(GL_TEXTURE1);
-
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "lightMatrix"), 1, GL_FALSE, &(scene.lightMatrix)[0][0]);
-
-	for (int i = 0; i < scene.solidObjects.size(); i++)
-	{
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "MVP"), 1, GL_FALSE, &(MVP*scene.solidObjects[i]->getModelMatrix())[0][0]); 
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programShadow, "modelMatrix"), 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
-		//box_node.draw();
-		scene.solidObjects[i]->draw();
-	}
-
-	glUseProgram(ShaderManager::programShadowInstanced);
-	glUniform1f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightOffset"), 0);
-	renderInstanced(scene, MVP, true);
-
-	glUseProgram(ShaderManager::programGlow);
-	
-	glActiveTexture(GL_TEXTURE0);
-
-	for (int i = 0; i < scene.glowingObjects.size(); i++)
-	{
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programGlow, "MVP"), 1, GL_FALSE, &(MVP*scene.glowingObjects[i]->getModelMatrix())[0][0]);
-		glUniform3f(glGetUniformLocation(ShaderManager::programGlow, "lightColor"), 3.0, 3.0, 3.0);
-		scene.glowingObjects[i]->draw();
-	}
-		
-	renderTerrain(scene, MVP, true);
-
-	if (scene.water)
-	{
-		glUseProgram(ShaderManager::programWater);
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, scene.water->m_reflectionTex);
-
-		scene.water->draw();
-	}
-
-
-	/*glUseProgram(ShaderManager::programMirror); 
-	
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programMirror, "MVP"), 1, GL_FALSE, &(MVP*scene.mirror.modelMatrix())[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programMirror, "modelMatrix"), 1, GL_FALSE, &scene.mirror.modelMatrix()[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programMirror, "V"), 1, GL_FALSE, &MVP[0][0]);
-	//glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programMirror, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, scene.mirror.m_reflectionTex);
-
-	glDisable(GL_CULL_FACE);
-	scene.mirror.draw();
-	glEnable(GL_CULL_FACE);*/
-
-
-	/*uniform mat4 MVP;
-	uniform mat4 modelMatrix;
-	uniform sampler2D Texture;
-	uniform vec3 lightDirection;*/
+	renderSolids(scene, VP, true);
+	renderInstanced(scene, VP, true);
+	renderGlow(scene, VP);
+	renderTerrain(scene, VP, true);
+	renderWater(scene, VP, true);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

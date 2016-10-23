@@ -8,6 +8,7 @@ out vec3 Normal;
 out float Height;
 
 uniform mat4 MVP;
+
 uniform float heightOffset;
 
 void main()

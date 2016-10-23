@@ -127,7 +127,7 @@ int main()
 					glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
 					glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
 					glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
-					glm::scale(glm::vec3(8.0 + r, 8.0 + r, 8.0 + r));
+					glm::scale(glm::vec3(6.0 + r, 6.0 + r, 6.0 + r));
 				matrices2.push_back(matrix);
 				continue;
 			}

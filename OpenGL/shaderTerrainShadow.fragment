@@ -8,7 +8,6 @@ in float Height;
 
 out vec4 outColor;
 
-
 uniform sampler2D shadowMap;
 uniform vec3 lightDirection;
 uniform vec2 heightTest;
