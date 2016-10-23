@@ -34,7 +34,7 @@ int main()
 	Mesh grass(vertices, elements);
 
 	loadPlane(vertices, elements);
-	Mesh ground(vertices, elements);
+	Mesh plain(vertices, elements);
 
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
@@ -146,13 +146,13 @@ int main()
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
-	for (int i = 0; i < 2000; i++)
+	for (int i = 0; i < 200; i++)
 	{
 		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 
 		glm::mat4 matrix =
-			glm::translate(glm::vec3(x, 10, y));
+			glm::translate(glm::vec3(x, 20, y));
 		matrices.push_back(matrix);
 	}
 
@@ -160,24 +160,26 @@ int main()
 
 	scene2.water = new Water(glm::vec2(0), glm::vec2(512), 1.4f);
 
+	Scene scene3;
+
+	scene3.terrain.loadHeightMap("resources/heightmap.hm");
+	scene3.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
+	scene3.SunDirection = glm::vec3(1, 1, 1);
+	scene3.lightMatrix =
+		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
+		glm::lookAt(glm::vec3(600.0, 600.0, 600.0),
+			glm::vec3(250.0, 0.0, 250.0),
+			glm::vec3(0.0, 1.0, 0.0));
+
+
 	Scene * theScene = &scene2;
 
 	do
 	{
-		RenderEngine::draw(*theScene);
+		RenderEngine::drawShaded(*theScene);
 		Controls::update();
-		scene2.camera.update();
 
-		if (glfwGetKey(WindowManager::window(), GLFW_KEY_Q) == GLFW_PRESS)
-			scene2.solidObjects[0]->rotate(glm::vec3(0, 0.05, 0));
-
-		if (glfwGetKey(WindowManager::window(), GLFW_KEY_E) == GLFW_PRESS)
-			scene2.solidObjects[0]->rotate(glm::vec3(0, -0.05, 0));
-
-		for (int i = 0; i < (*theScene).solidObjects.size(); i++)
-			(*theScene).solidObjects[i]->calculateMatrices();
-		for (int i = 0; i < scene2.glowingObjects.size(); i++)
-			(*theScene).glowingObjects[i]->calculateMatrices();
+		theScene->update();
 
 	} while (WindowManager::update());
 

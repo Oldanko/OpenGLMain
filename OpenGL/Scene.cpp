@@ -2,8 +2,23 @@
 
 
 
+void Scene::update()
+{
+	camera.update();
+	if (water)
+		water->calculateMatrices(camera);
+
+	for (int i = 0; i < solidObjects.size(); i++)
+		solidObjects[i]->calculateMatrices();
+	for (int i = 0; i < glowingObjects.size(); i++)
+		glowingObjects[i]->calculateMatrices();
+
+
+}
+
 Scene::Scene()
 {
+	water = nullptr;
 }
 
 

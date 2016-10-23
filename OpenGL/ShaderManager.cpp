@@ -21,7 +21,7 @@ GLuint ShaderManager::programShadowInstanced = 0;
 GLuint ShaderManager::programTerrain = 0;
 GLuint ShaderManager::programTerrainShadow = 0;
 
-GLuint ShaderManager::programWater = 0;
+GLuint ShaderManager::programWater = 0; 
 
 void ShaderManager::init()
 {

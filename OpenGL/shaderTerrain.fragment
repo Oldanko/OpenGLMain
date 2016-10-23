@@ -5,9 +5,13 @@ out vec4 outColor;
 in vec3 Normal;
 in float Height;
 uniform vec3 lightDirection;
+uniform vec2 heightTest;
 
 void main()
 {	
+	if(heightTest.x != 0 && heightTest.y*heightTest.x > Height*heightTest.x)
+		discard;
+	
 	float slope = max(dot(Normal, vec3(0.0, 1.0, 0.0)), 0.0);
 	
 	float power = max(dot(Normal, normalize(lightDirection)), 0.0);

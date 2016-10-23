@@ -55,9 +55,9 @@ void Water::PrepareVertexArray()
 	float vertices[] =
 	{
 		m_A.x, m_height, m_A.y, 0.0, 0.0,
-		m_B.x, m_height, m_A.y, 1.0, 0.0,
+		m_A.x, m_height, m_B.y, 0.0, 1.0,
 		m_B.x, m_height, m_B.y, 1.0, 1.0,
-		m_A.x, m_height, m_B.y, 0.0, 1.0
+		m_B.x, m_height, m_A.y, 1.0, 0.0
 	};
 
 	glGenBuffers(1, &m_vbo);
@@ -90,45 +90,23 @@ void Water::PrepareVertexArray()
 
 void Water::PrepareFrameBuffer()
 {
-	/*glGenFramebuffers(1, &m_fbo);
-	
-	glGenTextures(1, &m_reflectionTex);
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
-	glTexImage2D(GL_TEXTURE_2D, 1, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTex, 0);
-	
-	glGenRenderbuffers(1, &m_reflectionRbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_reflectionRbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH, 1280, 720);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_reflectionRbo);
-
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Could not create fbo\n";
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);*/
-
-	GLuint m_fbo;
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
 	glGenTextures(1, &m_reflectionTex);
 	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTex, 0);
 
 	glGenRenderbuffers(1, &m_reflectionRbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_reflectionRbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_reflectionRbo); 
 	
@@ -148,15 +126,24 @@ void Water::bindReflectionTexture()
 }
 
 
-
 void Water::calculateMatrices(Camera & camera)
 {
 
-	glm::lookAt(
-		glm::vec3(0),
-		glm::vec3(0),
+	glm::vec3 target = camera.position();
+	glm::vec3 pointOfView = camera.cameraGlobalPosition();
+
+	m_reflectionMatrix = glm::lookAt(
+		glm::vec3(pointOfView.x, m_height - pointOfView.y, pointOfView.z),
+		glm::vec3(target.x, m_height - target.y, target.z),
 		glm::vec3(0, -1, 0)
 		);
+
+
+}
+
+float Water::height()
+{
+	return m_height;
 }
 
 

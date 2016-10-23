@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Water.h"
 
+
 class Scene
 {
 public:
@@ -19,6 +20,7 @@ public:
 	glm::mat4 lightMatrix;
 	glm::vec3 SunDirection;
 
+	void update();
 
 	Scene();
 	~Scene();

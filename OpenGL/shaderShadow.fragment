@@ -2,7 +2,7 @@
 
 in vec2 TexCoord;
 in vec3 Normal;
-in vec3 FragPosition;
+//in vec3 FragPosition;
 in vec4 FragPositionLightSpace;
 
 out vec4 outColor;
@@ -22,7 +22,7 @@ float ShadowCalculation(vec4 fragPositionLightSpace)
 	
 	float currentDepth = projCoords.z;
 
-	float bias = 0.005;
+	//float bias = 0.005;
 
 	//float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 	 
@@ -34,7 +34,7 @@ float ShadowCalculation(vec4 fragPositionLightSpace)
 		for(float y = -1; y <= 1; y += 0.5)
 		{
 			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+			shadow += currentDepth /*- bias*/ > pcfDepth ? 1.0 : 0.0;        
 		}    
 	}
 	shadow /= 25.0;

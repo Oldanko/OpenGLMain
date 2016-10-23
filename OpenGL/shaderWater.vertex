@@ -4,13 +4,18 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoord;
 
 uniform mat4 VP;
+uniform mat4 V;
 
 out vec2 TexCoord;
 out vec3 Normal;
+out vec3 Position;
+out vec4 PositionCameraSpace;
 
 void main()
 {	
 	gl_Position = VP*vec4(position, 1);
 	TexCoord = vec2(texCoord);
 	Normal = vec3(0.0f, 1.0f, 0.0f);
+	Position = position;
+	PositionCameraSpace = VP * vec4(position, 1.0);
 }

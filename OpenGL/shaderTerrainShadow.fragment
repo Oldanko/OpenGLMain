@@ -4,6 +4,7 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPosition;
 in vec4 FragPositionLightSpace;
+in float Height;
 
 out vec4 outColor;
 
@@ -20,7 +21,7 @@ float ShadowCalculation(vec4 fragPositionLightSpace)
 	
 	float currentDepth = projCoords.z;
 
-	float bias = max(0.05 * (1.0 - dot(Normal, lightDirection)), 0.005); //0.005;
+	//float bias = max(0.05 * (1.0 - dot(Normal, lightDirection)), 0.005); //0.005;
 
 	//float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 	 
@@ -31,7 +32,7 @@ float ShadowCalculation(vec4 fragPositionLightSpace)
 		for(float y = -1; y <= 1; y += 0.5)
 		{
 			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+			shadow += currentDepth /*- bias*/ > pcfDepth ? 1.0 : 0.0;        
 		}    
 	}
 	shadow /= 25.0;
@@ -44,20 +45,36 @@ void main()
 {
 
 	float slope = max(dot(Normal, vec3(0.0, 1.0, 0.0)), 0.0);
+	
 	vec3 grassland = vec3(57/255.0, 108/255.0, 8/255.0); 
 	vec3 rock = vec3(120/255.0, 120/255.0, 120/255.0);
+	vec3 bottom = vec3(58/255.0, 37/255.0, 30/255.0);
 
 	vec3 color = grassland;
 
 	float slopeMin = 0.98;
 	float slopeMax = 0.95;
 
-	if(slope < slopeMax)
-		color = rock * slope;
+	float bottomMin = 1.35;
+	float bottomMax = 2.0;
+
+
+	if(Height < bottomMin)
+		color = bottom;
+	
+	else if(Height < bottomMax)
+	{
+		float k = (Height - bottomMin)/(bottomMax - bottomMin);
+		color = (grassland * k + bottom * (1 - k));
+	}
+	
+	else if(slope < slopeMax)
+		color = rock;
+	
 	else if(slope < slopeMin)
 	{
 		float k = (slope - slopeMax)/(slopeMin-slopeMax);
-		color = (grassland * k + rock * (1 - k)) * slope;
+		color = (grassland * k + rock * (1 - k));
 	}
 
 	vec3 lightColor = vec3(1.0f);
