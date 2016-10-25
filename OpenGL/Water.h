@@ -12,13 +12,13 @@ class Water
 public:
 	glm::mat4 m_reflectionMatrix;
 	glm::mat4 m_refractionMatrix;
-	GLuint m_fbo, m_reflectionTex, m_reflectionRbo;
+	GLuint m_fbo[2], m_reflectionTex, m_reflectionRbo, m_refractionTex, m_refractionRbo;
 	Water();
 	Water(glm::vec2 A, glm::vec2 B, float height);
 	void PrepareVertexArray();
 	void PrepareFrameBuffer();
-	void bindFrameBuffer();
 	void bindReflectionTexture();
+	void bindRefractionTexture();
 	void calculateMatrices(Camera & camera);
 	float height();
 	void draw();	

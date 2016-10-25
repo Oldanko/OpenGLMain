@@ -18,11 +18,6 @@ void RenderEngine::renderTerrain(Scene &scene, glm::mat4 &matrix, bool shadow)
 
 	glUseProgram(*program);
 
-	scene.water ?
-		glUniform2f(glGetUniformLocation(*program, "heightTest"), 1, scene.water->height())
-		:
-		glUniform2f(glGetUniformLocation(*program, "heightTest"), 0, 0);
-
 	glUniform3f(glGetUniformLocation(*program, "lightDirection"), scene.SunDirection.x, scene.SunDirection.y, scene.SunDirection.z);
 	glUniformMatrix4fv(glGetUniformLocation(*program, "MVP"), 1, GL_FALSE, &matrix[0][0]);
 
@@ -163,9 +158,18 @@ void RenderEngine::renderWater(Scene & scene, glm::mat4 & matrix, bool shadow)
 		glUseProgram(ShaderManager::programWater);
 		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "VP"), 1, GL_FALSE, &matrix[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(ShaderManager::programWater, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+
+		glUniform1i(glGetUniformLocation(ShaderManager::programWater, "reflection"), 0);
+		glUniform1i(glGetUniformLocation(ShaderManager::programWater, "refraction"), 1);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, scene.water->m_reflectionTex);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, scene.water->m_refractionTex);
 		scene.water->draw();
+
+
+		glActiveTexture(GL_TEXTURE0);
 	}
 }
 
@@ -209,12 +213,12 @@ void RenderEngine::draw(Scene & scene)
 
 	if (scene.water)
 	{
-		// Water FBO test
+		// Water Reflection FBO
 		glViewport(0, 0, 1280, 720);
 
 		glm::mat4 MVP = scene.water->m_reflectionMatrix;
 
-		scene.water->bindFrameBuffer();
+		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo[0]);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
@@ -228,7 +232,7 @@ void RenderEngine::draw(Scene & scene)
 		glUseProgram(ShaderManager::programTerrain);
 
 		glUniform1f(glGetUniformLocation(ShaderManager::programTerrain, "heightOffset"), -scene.water->height());
-		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1, scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1.0f, scene.water->height());
 		renderTerrain(scene, MVP, false);
 		glUniform1f(glGetUniformLocation(ShaderManager::programTerrain, "heightOffset"), 0);
 
@@ -243,10 +247,35 @@ void RenderEngine::draw(Scene & scene)
 		renderSolids(scene, MVP, false);
 		glUniform1f(glGetUniformLocation(ShaderManager::program, "heightOffset"), 0);
 
+		// Water Refraction FBO
+		glViewport(0, 0, 1280, 720);
+
+		MVP = scene.water->m_refractionMatrix;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo[1]);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+
+		glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glUseProgram(ShaderManager::programTerrain);
+
+		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), -1.0f, scene.water->height() + 0.1);
+		renderTerrain(scene, MVP, false);
+		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1.0f, scene.water->height());
+
+		renderInstanced(scene, MVP, false);
+
+		renderSolids(scene, MVP, false);
+
 	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//End Water FBO test
 
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
 
@@ -280,7 +309,7 @@ void RenderEngine::drawShaded(Scene & scene)
 
 		glViewport(0, 0, 1280, 720);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo[0]);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);

@@ -5,6 +5,8 @@ GLFWwindow *WindowManager::m_window = nullptr;
 int WindowManager::m_height = 0;
 int WindowManager::m_width = 0;
 
+float WindowManager::m_FoV = 0.0f;
+
 float WindowManager::m_lastTime = 0;
 float WindowManager::m_timeDelta = 0;
 
@@ -28,8 +30,11 @@ void WindowManager::init()
 
 	m_width = 1280;
 	m_height = 720;
+	m_FoV = 70.0f;
 
-	m_window = glfwCreateWindow(m_width, m_height, "Tutorial 01", NULL, NULL);
+	m_projectionMatrix = glm::perspective(glm::radians(m_FoV), (float)m_width / m_height, 1.0f, 100000.0f);
+
+	m_window = glfwCreateWindow(m_width, m_height, "OpenGL Engine", NULL, NULL);
 	if (m_window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
@@ -73,6 +78,10 @@ void WindowManager::close()
 
 const int& WindowManager::width() { return m_width; }
 const int& WindowManager::height() { return m_height; }
+const float & WindowManager::FoV()
+{
+	return m_FoV;
+}
 GLFWwindow *WindowManager::window() { return m_window; }
 const float& WindowManager::timeDelta() { return m_timeDelta; }
 
