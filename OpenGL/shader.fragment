@@ -8,10 +8,24 @@ out vec4 outColor;
 uniform sampler2D Texture;
 uniform vec3 lightDirection;
 
-//vec3 sunDir = normalize(vec3(1.0, 0.05, 1.0));
-
-
 void main()
+{
+
+	if(texture(Texture, TexCoord).a < 0.7)
+		discard;
+
+	vec3 color = texture(Texture, TexCoord).rgb;
+	
+	vec3 lightColor = vec3(1.0f);
+	vec3 ambientColor = 0.3f*lightColor;
+	
+	float diffuse = max(dot(normalize(Normal), normalize(lightDirection)), 0.0);
+
+	
+	outColor = vec4(ambientColor*color + 0.7 * color * diffuse, 1.0f);
+}
+
+/*void main()
 {
 
 	if(texture(Texture, TexCoord).a < 0.7)
@@ -23,4 +37,4 @@ void main()
 		
 	outColor = vec4(vec3(0.05, 0.05, 0.05)*color + color * power, 1.0f);
 	//outColor = vec4(vec3(power), 1.0);
-}
+}*/

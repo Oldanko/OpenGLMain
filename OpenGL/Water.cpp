@@ -1,4 +1,5 @@
 #include "Water.h"
+#include "WindowManager.h"
 #include <iostream>
 
 
@@ -95,6 +96,7 @@ void Water::PrepareFrameBuffer()
 
 	glGenTextures(1, &m_reflectionTex);
 	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -130,7 +132,7 @@ void Water::calculateMatrices(Camera & camera)
 	glm::vec3 target = camera.position();
 	glm::vec3 pointOfView = camera.cameraGlobalPosition();
 
-	m_reflectionMatrix = glm::lookAt(
+	m_reflectionMatrix = WindowManager::projectionMatrix() * glm::lookAt(
 		glm::vec3(pointOfView.x, m_height - pointOfView.y, pointOfView.z),
 		glm::vec3(target.x, m_height - target.y, target.z),
 		glm::vec3(0, -1, 0)

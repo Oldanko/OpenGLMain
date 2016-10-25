@@ -10,8 +10,10 @@ float WindowManager::m_timeDelta = 0;
 
 glm::mat4 WindowManager::m_projectionMatrix = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 1.0f, 100000.0f);
 
+
 void WindowManager::init()
 {
+
 	if (!glfwInit())
 	{
 		fprintf(stderr, "Failed to initialize GLFW\n");

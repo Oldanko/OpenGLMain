@@ -53,8 +53,7 @@ void main()
 	vec3 lightColor = vec3(1.0f);
 	vec3 ambientColor = 0.3f*lightColor;
 
-
-	float diffuse = max(dot(Normal, lightDirection), 0.0);
+	float diffuse = max(dot(normalize(Normal), normalize(lightDirection)), 0.0);
 
 	float shadow = ShadowCalculation(FragPositionLightSpace);
 

@@ -212,7 +212,7 @@ void RenderEngine::draw(Scene & scene)
 		// Water FBO test
 		glViewport(0, 0, 1280, 720);
 
-		glm::mat4 MVP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
+		glm::mat4 MVP = scene.water->m_reflectionMatrix;
 
 		scene.water->bindFrameBuffer();
 
@@ -276,7 +276,7 @@ void RenderEngine::drawShaded(Scene & scene)
 	
 	if (scene.water)
 	{
-		VP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
+		VP = scene.water->m_reflectionMatrix;
 
 		glViewport(0, 0, 1280, 720);
 
