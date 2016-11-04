@@ -16,6 +16,8 @@
 #include "Scene.h"
 #include "RenderEngine.h"
 
+#include "GUI.h"
+
 
 int main()
 {
@@ -25,6 +27,14 @@ int main()
 	RenderEngine::init();
 
 	srand(time(0));
+
+	glm::vec2 n = glm::normalize(glm::vec2(1, 1));
+
+	std::cout << n.x << " " << n.y << std::endl;
+
+	n = glm::normalize(glm::vec2(-1, 2));
+
+	std::cout << n.x / n.y << std::endl;
 
 	//Resources Managing
 	std::vector<float> vertices;
@@ -179,12 +189,21 @@ int main()
 
 	Scene * theScene = &scene2;
 
+	slider sld(glm::vec2(-0.5, 0.0), 0.5);
+
 	do
 	{
-		RenderEngine::draw(*theScene);
-		Controls::update();
 
+		RenderEngine::drawShaded(*theScene);
 		theScene->update();
+
+		sld.update();
+		glDisable(GL_CULL_FACE);
+		glUseProgram(ShaderManager::program2D);
+		sld.draw();
+		glEnable(GL_CULL_FACE);
+
+		Controls::update();
 
 	} while (WindowManager::update());
 

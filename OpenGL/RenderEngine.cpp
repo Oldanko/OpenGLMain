@@ -1,7 +1,6 @@
 #include "RenderEngine.h"
 #include "ShaderManager.h"
 
-
 GLuint RenderEngine::depthMapFBO;
 GLuint RenderEngine::depthMap;
 
@@ -210,7 +209,6 @@ void RenderEngine::terminate()
 
 void RenderEngine::draw(Scene & scene)
 {
-
 	if (scene.water)
 	{
 		// Water Reflection FBO
@@ -272,7 +270,6 @@ void RenderEngine::draw(Scene & scene)
 		renderInstanced(scene, MVP, false);
 
 		renderSolids(scene, MVP, false);
-
 	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

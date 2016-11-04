@@ -153,7 +153,7 @@ Camera::Camera()
 {
 	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_shoulder = 150.0f;
-	m_angle = glm::vec2(glm::radians(30.0f), 0.0f);
+	m_angle = glm::vec2(glm::radians(90.0f), 0.0f);
 	m_rotationSpeed = 3.0f;
 	m_matrixShouldBeCalculated = true;
 	calculateViewMatrix();
