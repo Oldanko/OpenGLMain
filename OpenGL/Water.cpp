@@ -1,44 +1,11 @@
 #include "Water.h"
 #include "WindowManager.h"
+#include "ShaderManager.h"
 #include <iostream>
 
 
 Water::Water()
 {
-	float vertices[] =
-	{
-		0.0, 1.0, 0.0,
-		100.0, 1.0, 0.0,
-		100.0, 1.0, 100.0,
-		0.0, 1.0, 100.0
-	};
-
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), vertices, GL_STATIC_DRAW);
-
-	//delete[] vertices;
-
-	unsigned int indices[] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	glGenBuffers(1, &m_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-
-	glBindVertexArray(0);
 }
 
 Water::Water(glm::vec2 A, glm::vec2 B, float height)
@@ -55,15 +22,15 @@ void Water::PrepareVertexArray()
 {
 	float vertices[] =
 	{
-		m_A.x, m_height, m_A.y, 0.0, 0.0,
-		m_A.x, m_height, m_B.y, 0.0, 1.0,
-		m_B.x, m_height, m_B.y, 1.0, 1.0,
-		m_B.x, m_height, m_A.y, 1.0, 0.0
+		m_A.x, m_A.y, 0.0, 0.0,
+		m_A.x, m_B.y, 0.0, 1.0,
+		m_B.x, m_B.y, 1.0, 1.0,
+		m_B.x, m_A.y, 1.0, 0.0
 	};
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float), vertices, GL_STATIC_DRAW);
 
 	unsigned int indices[] =
 	{
@@ -80,9 +47,9 @@ void Water::PrepareVertexArray()
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2*sizeof(float)));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
@@ -171,6 +138,7 @@ float Water::height()
 
 void Water::draw()
 {
+	glUniform1f(glGetUniformLocation(ShaderManager::programWater, "height"), m_height);
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

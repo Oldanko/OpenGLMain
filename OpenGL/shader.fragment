@@ -2,14 +2,18 @@
 
 in vec2 TexCoord;
 in vec3 Normal;
+in float Height;
 
 out vec4 outColor;
 
 uniform sampler2D Texture;
 uniform vec3 lightDirection;
+uniform vec2 heightTest;
 
 void main()
 {
+	if(heightTest.x != 0 && heightTest.y*heightTest.x > Height*heightTest.x)
+		discard;
 
 	if(texture(Texture, TexCoord).a < 0.7)
 		discard;

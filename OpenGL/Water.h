@@ -22,6 +22,7 @@ public:
 	void calculateMatrices(Camera & camera);
 	float height();
 	void draw();	
+	void setHeight(float height) { m_height = height; }
 	~Water();
 };
 

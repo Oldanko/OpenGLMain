@@ -9,6 +9,7 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPosition;
 out vec4 FragPositionLightSpace;
+out float Height;
 
 uniform mat4 VP;
 uniform mat4 lightMatrix;
@@ -17,10 +18,13 @@ uniform float heightOffset;
 
 void main()
 {	
-	gl_Position = VP* (modelMatrix * vec4(position, 1) + vec4(0.0, heightOffset, 0.0, 0.0));
+	vec4 worldSpace = modelMatrix * vec4(position, 1);
+
+	gl_Position = VP* (worldSpace + vec4(0.0, heightOffset, 0.0, 0.0));
 	
 	TexCoord = vec2(texCoord.x, 1.0f - texCoord.y);
 	Normal = normalize(transpose(inverse(mat3(modelMatrix))) * normal);
 	FragPosition = vec3(modelMatrix * vec4(position, 1.0f));
 	FragPositionLightSpace = lightMatrix * vec4(FragPosition, 1.0f);
+	Height = worldSpace.y;
 }

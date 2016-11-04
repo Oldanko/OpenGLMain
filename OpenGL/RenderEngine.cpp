@@ -236,14 +236,18 @@ void RenderEngine::draw(Scene & scene)
 
 		glUseProgram(ShaderManager::programInstanced);
 		glUniform1f(glGetUniformLocation(ShaderManager::programInstanced, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programInstanced, "heightTest"), 1.0f, scene.water->height());
 		renderInstanced(scene, MVP, false);
 		glUniform1f(glGetUniformLocation(ShaderManager::programInstanced, "heightOffset"), 0);
+		//glUniform2f(glGetUniformLocation(ShaderManager::programInstanced, "heightTest"), -1.0f, scene.water->height());
 
 
 		glUseProgram(ShaderManager::program);
 		glUniform1f(glGetUniformLocation(ShaderManager::program, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::program, "heightTest"), 1.0f, scene.water->height());
 		renderSolids(scene, MVP, false);
 		glUniform1f(glGetUniformLocation(ShaderManager::program, "heightOffset"), 0);
+		//glUniform2f(glGetUniformLocation(ShaderManager::program, "heightTest"), -1.0f, scene.water->height());
 
 		// Water Refraction FBO
 		glViewport(0, 0, 1280, 720);
@@ -267,9 +271,16 @@ void RenderEngine::draw(Scene & scene)
 		renderTerrain(scene, MVP, false);
 		glUniform2f(glGetUniformLocation(ShaderManager::programTerrain, "heightTest"), 1.0f, scene.water->height());
 
-		renderInstanced(scene, MVP, false);
 
+		glUseProgram(ShaderManager::programInstanced);
+		glUniform2f(glGetUniformLocation(ShaderManager::programInstanced, "heightTest"), -1, scene.water->height() + .1);
+		renderInstanced(scene, MVP, false);
+		glUniform2f(glGetUniformLocation(ShaderManager::programInstanced, "heightTest"), 1, scene.water->height());
+
+		glUseProgram(ShaderManager::program);
+		glUniform2f(glGetUniformLocation(ShaderManager::program, "heightTest"), -1, scene.water->height() + 0.1);
 		renderSolids(scene, MVP, false);
+		glUniform2f(glGetUniformLocation(ShaderManager::program, "heightTest"), 1, scene.water->height());
 	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -325,11 +336,13 @@ void RenderEngine::drawShaded(Scene & scene)
 
 		glUseProgram(ShaderManager::programShadow);
 		glUniform1f(glGetUniformLocation(ShaderManager::programShadow, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programShadow, "heightTest"), 1, scene.water->height());
 		renderSolids(scene, VP, true);
 		glUniform1f(glGetUniformLocation(ShaderManager::programShadow, "heightOffset"), 0);
 
 		glUseProgram(ShaderManager::programShadowInstanced);
 		glUniform1f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightOffset"), -scene.water->height());
+		glUniform2f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightTest"), 1, scene.water->height());
 		renderInstanced(scene, VP, true);
 		glUniform1f(glGetUniformLocation(ShaderManager::programShadowInstanced, "heightOffset"), 0);
 	}

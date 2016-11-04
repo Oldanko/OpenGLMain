@@ -189,15 +189,18 @@ int main()
 
 	Scene * theScene = &scene2;
 
-	slider sld(glm::vec2(-0.5, 0.0), 0.5);
+	slider sld(glm::vec2(0.45, 0.8), 0.5);
 
 	do
 	{
 
-		RenderEngine::drawShaded(*theScene);
+		RenderEngine::draw(*theScene);
 		theScene->update();
 
 		sld.update();
+		if (theScene->water)
+			theScene->water->setHeight(sld.value() * 10);
+
 		glDisable(GL_CULL_FACE);
 		glUseProgram(ShaderManager::program2D);
 		sld.draw();

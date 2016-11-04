@@ -6,6 +6,7 @@ layout(location = 2) in vec3 normal;
 
 out vec2 TexCoord;
 out vec3 Normal;
+out float Height;
 
 uniform mat4 VP;
 uniform mat4 modelMatrix;
@@ -13,8 +14,11 @@ uniform mat4 modelMatrix;
 uniform float heightOffset;
 
 void main()
-{	
-	gl_Position = VP* (modelMatrix * vec4(position, 1) + vec4(0.0, heightOffset, 0.0, 0.0));
+{
+	vec4 worldSpace = modelMatrix * vec4(position, 1);
+	gl_Position = VP* (worldSpace + vec4(0.0, heightOffset, 0.0, 0.0));
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
 	Normal = mat3(transpose(inverse(modelMatrix))) * normal;
+	
+	Height = worldSpace.y;
 }
