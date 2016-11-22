@@ -13,6 +13,8 @@ class WindowManager
 	static int m_height;
 	static int m_width;
 
+	static float m_FoV;
+
 	static float m_lastTime;
 	static float m_timeDelta;
 
@@ -24,6 +26,7 @@ public:
 
 	static const int& width();
 	static const int& height();
+	static const float& FoV();
 	static GLFWwindow *window();
 	static const float& timeDelta();
 	static const glm::mat4 projectionMatrix();

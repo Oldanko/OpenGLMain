@@ -20,9 +20,12 @@ class Camera
 public:
 	glm::mat4 ViewMatrix();
 	void calculateViewMatrix();
-	const glm::vec3 cameraLocalPosition();
-	const glm::vec3 cameraGlobalPosition();
-	const glm::vec3 cameraDirection();
+	const glm::vec3 & position();
+	const glm::vec2 & angles();
+	const glm::vec3 & cameraLocalPosition();
+	const glm::vec3 & cameraGlobalPosition();
+	const glm::vec3 & cameraDirection();
+	glm::vec3 clipCoordsToVector(glm::vec2 coords);
 
 	void rotateUp(float a);
 	void rotateLeft(float a);

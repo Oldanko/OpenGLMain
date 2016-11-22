@@ -22,6 +22,9 @@ public:
 	static GLuint programTerrain;
 	static GLuint programTerrainShadow;
 
+	static GLuint programWater;
+	static GLuint programWaterShadow;
+
 	static void init();
 	static void terminate();
 	

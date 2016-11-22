@@ -1,0 +1,25 @@
+#version 330 core
+
+layout(location = 0) in vec2 position;
+layout(location = 1) in vec2 texCoord;
+
+uniform mat4 VP;
+uniform mat4 lightMatrix;	//Shadow mapping
+
+uniform float height;
+
+out vec2 TexCoord;
+out vec3 Normal;
+out vec3 FragPosition;
+out vec4 FragPositionCameraSpace;
+out vec4 FragPositionLightSpace;	//Shadow mapping
+
+void main()
+{	
+	FragPosition = vec3(position.x, height, position.y);
+	gl_Position = VP*vec4(FragPosition, 1);
+	TexCoord = vec2(texCoord);
+	Normal = vec3(0.0f, 1.0f, 0.0f);
+	FragPositionCameraSpace = VP * vec4(FragPosition, 1.0);
+	FragPositionLightSpace = lightMatrix * vec4(FragPosition, 1.0);
+}

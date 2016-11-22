@@ -1,17 +1,10 @@
 #version 330 core
 
-out vec4 color;
+out vec4 outColor;
 
-in vec2 UV;
-
-uniform sampler2D tex;
+uniform vec3 color;
 
 void main()
 {
-	float c = texture(tex, UV).r;
-
-	if(c == 1.0)
-		discard;
-
-	color = vec4(vec3(c), 1.0);
+	outColor = vec4(color, 1.0f);
 }

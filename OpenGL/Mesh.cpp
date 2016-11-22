@@ -1,7 +1,5 @@
 #include "Mesh.h"
 
-
-
 Mesh::Mesh()
 {
 }
@@ -38,11 +36,11 @@ void Mesh::bindEBO()
 
 void Mesh::draw()
 {
-	glDrawElements(GL_TRIANGLES, m_indicesNum, GL_UNSIGNED_INT, 0);
-}
-
+		glDrawElements(GL_TRIANGLES, m_indicesNum, GL_UNSIGNED_INT, 0);
+	}
+	
 GLuint Mesh::indicesNum()
-{
+{	
 	return m_indicesNum;
 }
 

@@ -16,6 +16,10 @@
 #include "Scene.h"
 #include "RenderEngine.h"
 
+#include "GUI.h"
+
+#include <glm\gtx\vector_angle.hpp>
+
 
 int main()
 {
@@ -23,6 +27,13 @@ int main()
 	Controls::init();
 	ShaderManager::init();
 	RenderEngine::init();
+
+	glm::mat4 test = glm::translate(glm::vec3(10, 20, 30));
+
+	std::cout << test[0][0] << " " << test[0][1] << " " << test[0][2] << " " << test[0][3] << "\n"
+		<< test[1][0] << " " << test[1][1] << " " << test[1][2] << " " << test[1][3] << "\n"
+		<< test[2][0] << " " << test[2][1] << " " << test[2][2] << " " << test[2][3] << "\n"
+		<< test[3][0] << " " << test[3][1] << " " << test[3][2] << " " << test[3][3] << "\n";
 
 	srand(time(0));
 
@@ -34,19 +45,23 @@ int main()
 	Mesh grass(vertices, elements);
 
 	loadPlane(vertices, elements);
-	Mesh ground(vertices, elements);
+	Mesh plain(vertices, elements);
 
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
 
-	Texture grass_texture("billboardgrass.png",
+	Texture grass_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture ground_texture("ground.png",
+	Texture grass1_texture("resources/grass_a.png",
+		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	Texture ground_texture("resources/ground.png",
 		GL_REPEAT, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
-	Texture box_texture("box.png",
+	Texture box_texture("resources/box.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture dendelionleaf_texture("billboardgrass.png",
+	Texture dendelionleaf_texture("resources/billboardgrass.png",
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+
+	
 
 	std::vector<glm::mat4> matrices;
 
@@ -79,19 +94,14 @@ int main()
 			glm::vec3(0.0, 0.0, 0.0),
 			glm::vec3(0.0, 1.0, 0.0));
 
-	scene.terrain.loadHeightMap("heightmap.hm");
-
 	Scene scene2;
 
-	scene2.terrain.loadHeightMap("heightmap.hm");
-	scene2.SunDirection = glm::vec3(1, 1, 1);
+	scene2.terrain.loadHeightMap("resources/heightmap.hm");
+	scene2.SunDirection = glm::vec3(1, 0.5, 1);
 
 	scene2.solidObjects.push_back(new Node(box, box_texture,
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
 
-
-//	scene2.solidObjects.push_back(new Node(ground, box_texture,
-//		glm::vec3(0, 2, 0), glm::vec3(0), glm::vec3(512)));
 
 
 	scene2.lightMatrix =
@@ -102,7 +112,8 @@ int main()
 
 	//Plant Grass
 	matrices = std::vector<glm::mat4>(0);
-	for (int i = 0; i < 80000; i++)
+	std::vector<glm::mat4> matrices2;
+	for (int i = 0; i < 50000; i++)
 	{
 		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
@@ -116,8 +127,24 @@ int main()
 			continue;
 		}
 
-		if (h < 1.5f)
+		if (h < 2.0f || (h < 2.5 && rand() % 2 == 0))
 		{
+			if (h > 1.0 || (h > 0.8 && rand() % 2 == 0))
+			{
+				if (rand() % 3 == 0)
+				{
+					float r = float(rand()) * 3.0 / INT_MAX;
+
+					glm::mat4 matrix =
+						glm::translate(glm::vec3(x, h, y)) *
+						glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
+						glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
+						glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
+						glm::scale(glm::vec3(8.0 + r, 8.0 + r, 8.0 + r));
+					matrices2.push_back(matrix);
+				}
+				continue;
+			}
 			i--;
 			continue;
 		}
@@ -131,39 +158,57 @@ int main()
 		matrices.push_back(matrix);
 	}
 	scene2.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
+	scene2.grass.push_back(new NodeInstansed(grass, grass1_texture, matrices2));
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
-	for (int i = 0; i < 2000; i++)
+	for (int i = 0; i < 200; i++)
 	{
 		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
 
 		glm::mat4 matrix =
-			glm::translate(glm::vec3(x, 10, y));
+			glm::translate(glm::vec3(x, 20, y));
 		matrices.push_back(matrix);
 	}
 
 	scene2.solidObjectsInstanced.push_back(new NodeInstansed(box, box_texture, matrices));
 
+	scene2.water = new Water(glm::vec2(0), glm::vec2(512), 1.4f);
+
+	Scene scene3;
+
+	scene3.terrain.loadHeightMap("resources/heightmap.hm");
+	scene3.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
+	scene3.SunDirection = glm::vec3(1, 1, 1);
+	scene3.lightMatrix =
+		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
+		glm::lookAt(glm::vec3(600.0, 600.0, 600.0),
+			glm::vec3(250.0, 0.0, 250.0),
+			glm::vec3(0.0, 1.0, 0.0));
+
+
 	Scene * theScene = &scene2;
+
+	slider sld(glm::vec2(0.45, 0.8), 0.5);
+	sld.setValue(0.15);
 
 	do
 	{
+
 		RenderEngine::drawShaded(*theScene);
+		theScene->update();
+
+		sld.update();
+		if (theScene->water)
+			theScene->water->setHeight(sld.value() * 10);
+
+		glDisable(GL_CULL_FACE);
+		glUseProgram(ShaderManager::program2D);
+		sld.draw();
+		glEnable(GL_CULL_FACE);
+
 		Controls::update();
-		scene2.camera.update();
-
-		if (glfwGetKey(WindowManager::window(), GLFW_KEY_Q) == GLFW_PRESS)
-			scene2.solidObjects[0]->rotate(glm::vec3(0, 0.05, 0));
-
-		if (glfwGetKey(WindowManager::window(), GLFW_KEY_E) == GLFW_PRESS)
-			scene2.solidObjects[0]->rotate(glm::vec3(0, -0.05, 0));
-
-		for (int i = 0; i < (*theScene).solidObjects.size(); i++)
-			(*theScene).solidObjects[i]->calculateMatrices();
-		for (int i = 0; i < scene2.glowingObjects.size(); i++)
-			(*theScene).glowingObjects[i]->calculateMatrices();
 
 	} while (WindowManager::update());
 

@@ -21,7 +21,8 @@ GLuint ShaderManager::programShadowInstanced = 0;
 GLuint ShaderManager::programTerrain = 0;
 GLuint ShaderManager::programTerrainShadow = 0;
 
-
+GLuint ShaderManager::programWater = 0;
+GLuint ShaderManager::programWaterShadow = 0;
 
 void ShaderManager::init()
 {
@@ -40,6 +41,9 @@ void ShaderManager::init()
 
 	programTerrain = LoadShaders("shaderTerrain.vertex", "shaderTerrain.fragment");
 	programTerrainShadow = LoadShaders("shaderTerrainShadow.vertex", "shaderTerrainShadow.fragment");
+
+	programWater = LoadShaders("shaderWater.vertex", "shaderWater.fragment");
+	programWaterShadow = LoadShaders("shaderWaterShadow.vertex", "shaderWaterShadow.fragment");
 }
 
 void ShaderManager::terminate()
@@ -54,9 +58,9 @@ void ShaderManager::terminate()
 
 	glDeleteProgram(programShadow);
 	glDeleteProgram(programShadowInstanced);
+
+	glDeleteProgram(programWater);
 }
-
-
 
 
 GLuint ShaderManager::LoadShaders(const char * vertex_file_path, const char * fragment_file_path)
