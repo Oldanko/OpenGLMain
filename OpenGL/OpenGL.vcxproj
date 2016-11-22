@@ -178,6 +178,8 @@
     <None Include="shaderTerrainShadow.vertex" />
     <None Include="shaderWater.fragment" />
     <None Include="shaderWater.vertex" />
+    <None Include="shaderWaterShadow.fragment" />
+    <None Include="shaderWaterShadow.vertex" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenGL.rc" />

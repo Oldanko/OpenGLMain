@@ -172,6 +172,12 @@
     <None Include="shaderWater.fragment">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaderWaterShadow.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaderWaterShadow.fragment">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenGL.rc">

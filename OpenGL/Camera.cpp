@@ -11,6 +11,21 @@ const glm::vec2 Camera::TILT_LIMITS = glm::vec2(glm::radians(5.0f), glm::radians
 		);
 }*/
 
+glm::vec3 Camera::clipCoordsToVector(glm::vec2 coords)
+{
+	glm::vec4 ray_eye =
+		glm::inverse(WindowManager::projectionMatrix())
+		* glm::vec4(
+			coords.x,
+			coords.y,
+			-1.0,
+			1.0);
+
+	glm::vec4 ray_wor = glm::inverse(m_matrix) * glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+
+	return glm::normalize(glm::vec3(ray_wor.x, ray_wor.y, ray_wor.z));
+}
+
 glm::mat4 Camera::ViewMatrix()
 {
 	return m_matrix;
@@ -20,28 +35,33 @@ void Camera::calculateViewMatrix()
 {
 	if (m_matrixShouldBeCalculated)
 	{
-		m_cameraPosition= rotateY(glm::vec3(0, m_shoulder*sin(m_angle.x), m_shoulder*cos(m_angle.x)), m_angle.y);
+		m_cameraPosition = rotateY(glm::vec3(0, m_shoulder*sin(m_angle.x), m_shoulder*cos(m_angle.x)), m_angle.y);
 		m_matrix = glm::lookAt(m_position + m_cameraPosition, m_position, glm::vec3(0.0, 1.0, 0.0));
 		m_matrixShouldBeCalculated = false;
 	}
 }
 
-const glm::vec3 Camera::position()
+const glm::vec3 & Camera::position()
 {
 	return m_position;
 }
 
-const glm::vec3 Camera::cameraLocalPosition()
+const glm::vec2 & Camera::angles()
+{
+	return m_angle;
+}
+
+const glm::vec3 & Camera::cameraLocalPosition()
 {
 	return m_cameraPosition;
 }
 
-const glm::vec3 Camera::cameraGlobalPosition()
+const glm::vec3 & Camera::cameraGlobalPosition()
 {
 	return m_cameraPosition + m_position;
 }
 
-const glm::vec3 Camera::cameraDirection()
+const glm::vec3 & Camera::cameraDirection()
 {
 	return normalize(-m_cameraPosition);
 }
@@ -153,7 +173,7 @@ Camera::Camera()
 {
 	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_shoulder = 150.0f;
-	m_angle = glm::vec2(glm::radians(90.0f), 0.0f);
+	m_angle = glm::vec2(glm::radians(45.0f), 0.0f);
 	m_rotationSpeed = 3.0f;
 	m_matrixShouldBeCalculated = true;
 	calculateViewMatrix();

@@ -18,6 +18,8 @@
 
 #include "GUI.h"
 
+#include <glm\gtx\vector_angle.hpp>
+
 
 int main()
 {
@@ -26,15 +28,14 @@ int main()
 	ShaderManager::init();
 	RenderEngine::init();
 
+	glm::mat4 test = glm::translate(glm::vec3(10, 20, 30));
+
+	std::cout << test[0][0] << " " << test[0][1] << " " << test[0][2] << " " << test[0][3] << "\n"
+		<< test[1][0] << " " << test[1][1] << " " << test[1][2] << " " << test[1][3] << "\n"
+		<< test[2][0] << " " << test[2][1] << " " << test[2][2] << " " << test[2][3] << "\n"
+		<< test[3][0] << " " << test[3][1] << " " << test[3][2] << " " << test[3][3] << "\n";
+
 	srand(time(0));
-
-	glm::vec2 n = glm::normalize(glm::vec2(1, 1));
-
-	std::cout << n.x << " " << n.y << std::endl;
-
-	n = glm::normalize(glm::vec2(-1, 2));
-
-	std::cout << n.x / n.y << std::endl;
 
 	//Resources Managing
 	std::vector<float> vertices;
@@ -96,7 +97,7 @@ int main()
 	Scene scene2;
 
 	scene2.terrain.loadHeightMap("resources/heightmap.hm");
-	scene2.SunDirection = glm::vec3(1, 1, 1);
+	scene2.SunDirection = glm::vec3(1, 0.5, 1);
 
 	scene2.solidObjects.push_back(new Node(box, box_texture,
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
@@ -190,11 +191,12 @@ int main()
 	Scene * theScene = &scene2;
 
 	slider sld(glm::vec2(0.45, 0.8), 0.5);
+	sld.setValue(0.15);
 
 	do
 	{
 
-		RenderEngine::draw(*theScene);
+		RenderEngine::drawShaded(*theScene);
 		theScene->update();
 
 		sld.update();

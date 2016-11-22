@@ -2,7 +2,33 @@
 #include "WindowManager.h"
 #include "ShaderManager.h"
 #include <iostream>
+#include <glm\gtx\transform.hpp>
 
+
+glm::vec3 intersection(glm::vec3 p1, glm::vec3 v1, glm::vec3 p2, glm::vec3 v2)
+{
+	float k = (v2.y*(p2.x - p1.x) + v2.x*(p1.y - p2.y)) / (v1.x*v2.y - v1.y*v2.x);
+
+	return glm::vec3(
+		p1.x + k*v1.x,
+		p1.y + k*v1.y,
+		p1.z + k*v1.z);
+}
+
+glm::vec3 refraction(glm::vec3 v, float n) //
+{
+	glm::vec3 vN = glm::normalize(v);
+	float base = glm::length(glm::vec2(vN.x, vN.z));
+
+	char sign = v.y > 0 ? -1 : 1;
+
+	return
+		glm::vec3(
+			base*n / base * vN.x,
+			sign * sqrt(1 - base*base),
+			base*n / base * vN.z
+		);
+}
 
 Water::Water()
 {
@@ -120,10 +146,11 @@ void Water::bindRefractionTexture()
 void Water::calculateMatrices(Camera & camera)
 {
 	glm::vec3 target = camera.position();
-	glm::vec3 pointOfView = camera.cameraGlobalPosition();
+	glm::vec3 POV = camera.cameraGlobalPosition();
+	float rotation = camera.angles().y;
 
 	m_reflectionMatrix = WindowManager::projectionMatrix() * glm::lookAt(
-		glm::vec3(pointOfView.x, m_height - pointOfView.y, pointOfView.z),
+		glm::vec3(POV.x, m_height - POV.y, POV.z),
 		glm::vec3(target.x, m_height - target.y, target.z),
 		glm::vec3(0, -1, 0)
 		);

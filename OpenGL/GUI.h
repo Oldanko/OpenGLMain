@@ -143,13 +143,11 @@ public:
 		glBindVertexArray(0);
 
 	}
-
 	~slider()
 	{
 		glDeleteVertexArrays(2, m_vao);
 		glDeleteBuffers(2, m_vbo);
 	}
-
 	void draw()
 	{
 		glBindVertexArray(m_vao[0]);
@@ -187,6 +185,10 @@ public:
 	GLfloat value()
 	{
 		return m_sliderPosition / m_size;
+	}
+	void setValue(float value)
+	{
+		m_sliderPosition = clamp(value*m_size, 0, m_size);
 	}
 };
 
