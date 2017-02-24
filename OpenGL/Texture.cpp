@@ -2,8 +2,11 @@
 #include <SOIL\SOIL.h>
 
 
+std::map<char*, Texture*> Texture::textures;
+
 Texture::Texture()
 {
+
 }
 
 Texture::Texture(const char * path, GLuint wrap_s, GLuint wrap_t, GLuint min_filter, GLuint mag_filter)
@@ -45,4 +48,10 @@ void Texture::bind()
 Texture::~Texture()
 {
 	glDeleteTextures(1, &m_texture);
+}
+
+void Texture::terminate()
+{
+	for (auto tex : textures)
+		delete tex.second;
 }

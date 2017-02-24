@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 in vec2 TexCoord;
 in vec3 Normal;
@@ -11,7 +11,7 @@ uniform sampler2D reflection;
 uniform sampler2D refraction;
 
 uniform vec3 CamPosition;
-uniform vec3 lightDirection;
+layout(location = 3) uniform vec3 lightDirection;
 
 uniform mat4 V;
 

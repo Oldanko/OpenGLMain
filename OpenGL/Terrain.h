@@ -1,6 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <glm\glm.hpp>
+#include "Texture.h"
 
 class Terrain
 {
@@ -11,6 +12,7 @@ class Terrain
 	float * getGrid();
 	unsigned int * indexicate();
 public:
+	Texture &noise;
 	Terrain();
 	Terrain(const char * heightmap);
 	~Terrain();

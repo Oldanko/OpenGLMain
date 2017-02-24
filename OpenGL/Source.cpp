@@ -21,19 +21,19 @@
 #include <glm\gtx\vector_angle.hpp>
 
 
+#include <chrono>
+
+using namespace std::chrono;
+
+#define NOW_MS duration_cast<microseconds>(system_clock::now().time_since_epoch())
+
+
 int main()
 {
 	WindowManager::init();
 	Controls::init();
 	ShaderManager::init();
 	RenderEngine::init();
-
-	glm::mat4 test = glm::translate(glm::vec3(10, 20, 30));
-
-	std::cout << test[0][0] << " " << test[0][1] << " " << test[0][2] << " " << test[0][3] << "\n"
-		<< test[1][0] << " " << test[1][1] << " " << test[1][2] << " " << test[1][3] << "\n"
-		<< test[2][0] << " " << test[2][1] << " " << test[2][2] << " " << test[2][3] << "\n"
-		<< test[3][0] << " " << test[3][1] << " " << test[3][2] << " " << test[3][3] << "\n";
 
 	srand(time(0));
 
@@ -50,19 +50,14 @@ int main()
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
 
-	Texture grass_texture("resources/billboardgrass.png",
-		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture grass1_texture("resources/grass_a.png",
-		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture ground_texture("resources/ground.png",
-		GL_REPEAT, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
-	Texture box_texture("resources/box.png",
-		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture dendelionleaf_texture("resources/billboardgrass.png",
-		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
+	Texture::textures["box"] = new Texture("resources/box.png",
+		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	Texture::textures["grass_a"] = new Texture("resources/billboardgrass.png",
+		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	Texture::textures["noise"] = new Texture("resources/noiseTexture.png",
+		GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	
-
 	std::vector<glm::mat4> matrices;
 
 	for (int i = 0; i < 100000; i++)
@@ -76,14 +71,13 @@ int main()
 		matrices.push_back(matrix);
 	}
 
-
 	Scene scene;
-	scene.solidObjects.push_back(new Node(box, box_texture,
+	scene.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(0), glm::vec3(rand(), rand(), rand()), glm::vec3(150)));
 	
-	scene.solidObjectsInstanced.push_back(new NodeInstansed(box, box_texture, matrices));
+	scene.solidObjectsInstanced.push_back(new NodeInstansed(box, *Texture::textures["box"], matrices));
 
-	scene.glowingObjects.push_back(new Node(box, box_texture,
+	scene.glowingObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(50000, 2500, 50000), glm::vec3(0.0), glm::vec3(2000)));
 
 	scene.SunDirection = glm::vec3(1.0, 1.0, 1.0);
@@ -99,7 +93,7 @@ int main()
 	scene2.terrain.loadHeightMap("resources/heightmap.hm");
 	scene2.SunDirection = glm::vec3(1, 0.5, 1);
 
-	scene2.solidObjects.push_back(new Node(box, box_texture,
+	scene2.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
 
 
@@ -113,10 +107,10 @@ int main()
 	//Plant Grass
 	matrices = std::vector<glm::mat4>(0);
 	std::vector<glm::mat4> matrices2;
-	for (int i = 0; i < 50000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
-		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
-		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX;
+		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX / 2;
+		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX / 2;
 		float h = scene2.terrain.findHeight(glm::vec2(x, y));
 		
 		glm::vec2 slope = scene2.terrain.findSlope(glm::vec2(x, y));
@@ -133,14 +127,14 @@ int main()
 			{
 				if (rand() % 3 == 0)
 				{
-					float r = float(rand()) * 3.0 / INT_MAX;
+					float r = float(rand()) * 0.1 / INT_MAX;
 
 					glm::mat4 matrix =
 						glm::translate(glm::vec3(x, h, y)) *
 						glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
 						glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
 						glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
-						glm::scale(glm::vec3(8.0 + r, 8.0 + r, 8.0 + r));
+						glm::scale(glm::vec3(0.2 + r, 0.2 + r, 0.2 + r));
 					matrices2.push_back(matrix);
 				}
 				continue;
@@ -157,8 +151,9 @@ int main()
 			glm::scale(glm::vec3(5.0, 2.0, 5.0));
 		matrices.push_back(matrix);
 	}
-	scene2.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
-	scene2.grass.push_back(new NodeInstansed(grass, grass1_texture, matrices2));
+
+	scene2.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass_a"], matrices));
+	//scene2.grass.push_back(new NodeInstansed(grass, grass1_texture, matrices2));
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
@@ -172,14 +167,14 @@ int main()
 		matrices.push_back(matrix);
 	}
 
-	scene2.solidObjectsInstanced.push_back(new NodeInstansed(box, box_texture, matrices));
+	scene2.solidObjectsInstanced.push_back(new NodeInstansed(box, *Texture::textures["box"], matrices));
 
 	scene2.water = new Water(glm::vec2(0), glm::vec2(512), 1.4f);
 
 	Scene scene3;
 
 	scene3.terrain.loadHeightMap("resources/heightmap.hm");
-	scene3.grass.push_back(new NodeInstansed(grass, grass_texture, matrices));
+	scene3.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass_a"], matrices));
 	scene3.SunDirection = glm::vec3(1, 1, 1);
 	scene3.lightMatrix =
 		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
@@ -196,7 +191,7 @@ int main()
 	do
 	{
 
-		RenderEngine::drawShaded(*theScene);
+		RenderEngine::render(*theScene);
 		theScene->update();
 
 		sld.update();
@@ -214,6 +209,9 @@ int main()
 
 	ShaderManager::terminate();
 	RenderEngine::terminate();
+	Texture::terminate();
+
+
 
 	return 0;
 }

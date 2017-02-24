@@ -18,6 +18,7 @@ void Scene::update()
 
 Scene::Scene()
 {
+
 	water = nullptr;
 }
 

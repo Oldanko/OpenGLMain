@@ -12,14 +12,18 @@ class Node
 protected:
 	GLuint m_vao;
 	Mesh& m_mesh;
-	Texture& m_texture;
 
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 	bool m_matrixShouldBeCalculated;
 	glm::mat4 m_modelMatrix;
+	Texture& m_texture;
 public:
+
+
+
+
 	Node(Mesh &mesh, Texture& texture);
 	Node(Mesh &mesh, Texture& texture,
 		glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);

@@ -10,6 +10,7 @@
 class Scene
 {
 public:
+
 	Camera camera;
 	Terrain terrain;
 	Water * water;

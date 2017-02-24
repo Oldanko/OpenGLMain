@@ -1,24 +1,26 @@
-#version 330 core
+#version 430 core
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in mat4 modelMatrix;
 
-uniform mat4 VP;
 
-out vec2 TexCoord;
+out vec3 FragCoord;
 out vec3 Normal;
-out float Height;
+out vec2 TexCoord;
 
-uniform float heightOffset;
+layout(location = 0) uniform mat4 VP;
+
+layout(location = 8) uniform mat4 viewMatrix;
+layout(location = 4) uniform float heightOffset;
 
 void main()
 {	
-	vec4 worldSpace = modelMatrix * vec4(position, 1);
-
-	gl_Position = VP* (worldSpace + vec4(0.0, heightOffset, 0.0, 0.0));
+	vec4 worldSpaceCoords = modelMatrix * vec4(position, 1);
+	FragCoord = worldSpaceCoords.xyz;
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
 	Normal = normalize(mat3(transpose(inverse(modelMatrix))) * normal);
-	Height = worldSpace.y;
+
+	gl_Position = VP * worldSpaceCoords;
 }

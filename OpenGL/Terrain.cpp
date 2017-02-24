@@ -1,20 +1,22 @@
 #include "Terrain.h"
 #include <fstream>
 #include <iostream>
+#include "ShaderManager.h"
 
 float linearInterpolaton(float a, float b, float x)
 {
 	return a*(1 - x) + b*x;
 }
 
-Terrain::Terrain()
+Terrain::Terrain() : noise(*Texture::textures["noise"])
 {
 	m_heightmap = nullptr;
 }
 
-Terrain::Terrain(const char * heightmap)
+Terrain::Terrain(const char * heightmap) : noise(*Texture::textures["noise"])
 {
 	m_heightmap = nullptr;
+
 	loadHeightMap(heightmap);
 }
 
@@ -114,9 +116,11 @@ float * Terrain::getGrid()
 
 void Terrain::draw()
 {
+	noise.bind();
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, (m_size - 1)*(m_size - 1) * 6, GL_UNSIGNED_INT, 0);
 }
+
 
 float Terrain::findHeight(glm::vec2 position)
 {

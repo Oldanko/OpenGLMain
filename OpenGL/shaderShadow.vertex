@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoord;
@@ -10,17 +10,17 @@ out vec3 FragPosition;
 out vec4 FragPositionLightSpace;
 out float Height;
 
-uniform mat4 lightMatrix;
-uniform mat4 VP;
-uniform mat4 modelMatrix;
+layout(location = 0) uniform mat4 MVP;
+layout(location = 1) uniform mat4 modelMatrix;
+layout(location = 2) uniform mat4 lightMatrix;
 
-uniform float heightOffset;
+layout(location = 4) uniform float heightOffset;
 
 void main()
 {	
 
 	vec4 worldSpace = modelMatrix * vec4(position, 1);
-	gl_Position = VP * (worldSpace + vec4(0.0, heightOffset, 0.0, 0.0));
+	gl_Position = MVP * (worldSpace + vec4(0.0, heightOffset, 0.0, 0.0));
 
 	TexCoord = vec2(texCoord.x, 1.0f - texCoord.y);
 	Normal = normalize(transpose(inverse(mat3(modelMatrix))) * normal);
