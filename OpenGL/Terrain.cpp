@@ -121,7 +121,6 @@ void Terrain::draw()
 	glDrawElements(GL_TRIANGLES, (m_size - 1)*(m_size - 1) * 6, GL_UNSIGNED_INT, 0);
 }
 
-
 float Terrain::findHeight(glm::vec2 position)
 {
 	float X = floor(position.x);

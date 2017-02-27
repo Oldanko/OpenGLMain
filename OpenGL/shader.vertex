@@ -9,15 +9,15 @@ out vec3 Normal;
 out vec2 TexCoord;
 
 layout(location = 0) uniform mat4 VP;
-layout(location = 1) uniform mat4 modelMatrix;
-layout(location = 8) uniform mat4 viewMatrix;
+layout(location = 1) uniform mat4 viewMatrix;
+layout(location = 2) uniform mat4 modelMatrix;
 
 void main()
 {
 	vec4 worldSpaceCoord = modelMatrix * vec4(position, 1);
-	FragCoord = worldSpaceCoord.xyz;
+	FragCoord = (viewMatrix * worldSpaceCoord).xyz;
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	Normal = normalize(mat3(transpose(inverse(modelMatrix))) * normal);
+	Normal = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normal);
 
 	gl_Position = VP * worldSpaceCoord;
 }

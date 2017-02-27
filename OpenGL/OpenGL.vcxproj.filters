@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{06313582-c91c-43d4-a576-ea2de70f71f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{b60931bd-cdbe-477c-92b6-7c950f8a2903}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -115,73 +121,40 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shader.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderInstanced.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderGlow.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderDepth.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderDepthInstanced.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderEmpty.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shader2D.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shader2D.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderShadow.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderShadow.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderShadowInstanced.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderTerrain.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderTerrain.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderTerrainDepth.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderTerrainShadow.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderTerrainShadow.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderWater.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderWater.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderWaterShadow.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaderWaterShadow.fragment">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="OpenGL.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\Shaders\shader.fragment">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shader.vertex">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shader2D.fragment">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shader2D.vertex">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderInstanced.vertex">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrain.fragment">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrain.vertex">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Textures\Textures.ls">
+      <Filter>Resource Files\Textures</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderOld.fragment">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrainOld.fragment">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

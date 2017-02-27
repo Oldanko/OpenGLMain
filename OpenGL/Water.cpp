@@ -165,7 +165,7 @@ float Water::height()
 
 void Water::draw()
 {
-	glUniform1f(glGetUniformLocation(ShaderManager::programWater, "height"), m_height);
+	//glUniform1f(glGetUniformLocation(ShaderManager::programWater, "height"), m_height);
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

@@ -8,7 +8,15 @@ public:
 
 	static GLuint program;
 	static GLuint programInstanced;
-	static GLuint programGlow;
+	static GLuint programTerrain;
+
+	static GLuint programDeferred;
+	static GLuint programInstancedDeferred;
+	static GLuint programTerrainDeferred;
+
+	static GLuint program2D;
+	//static GLuint programWater;
+	/*static GLuint programGlow;
 
 	static GLuint programDepth;
 	static GLuint programDepthInstanced;
@@ -17,13 +25,13 @@ public:
 	static GLuint program2D;
 
 	static GLuint programShadow;
-	static GLuint programShadowInstanced;
+	//static GLuint programShadowInstanced;
 
 	static GLuint programTerrain;
-	static GLuint programTerrainShadow;
+	//static GLuint programTerrainShadow;
 
 	static GLuint programWater;
-	static GLuint programWaterShadow;
+	//static GLuint programWaterShadow;*/
 
 	static void init();
 	static void terminate();

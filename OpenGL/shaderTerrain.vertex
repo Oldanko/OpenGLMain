@@ -4,22 +4,25 @@ layout(location = 0) in vec2 position;
 layout(location = 1) in float height;
 layout(location = 2) in vec3 normal;
 
+out vec3 FragCoord;
 out vec3 Normal;
 out vec2 UV;
+
 out float Height;
-out float slope;
+out float Slope;
 
 layout(location = 0) uniform mat4 VP;
-layout(location = 8) uniform mat4 viewMatrix;
-layout(location = 4) uniform float heightOffset;
+layout(location = 1) uniform mat4 viewMatrix;
 
 void main()
 {	
-
-
-	gl_Position = VP*vec4(position.x, height + heightOffset, position.y, 1);
-	Normal = normalize(mat3(transpose(inverse(viewMatrix))) * normal);
-	Height = height;
+	FragCoord = (viewMatrix * vec4(position.x, height, position.y, 1.0)).xyz;
+	Normal = normalize(normal);
 	UV = position;
-	slope = max(dot(normalize(normal), vec3(0.0, 1.0, 0.0)), 0.0);
+	
+	Height = height;
+	Slope = max(dot(normalize(normal), vec3(0.0, 1.0, 0.0)), 0.0);
+
+	gl_Position = VP*vec4(position.x, height, position.y, 1);
+	
 }

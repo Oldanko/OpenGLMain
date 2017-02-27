@@ -28,12 +28,17 @@ using namespace std::chrono;
 #define NOW_MS duration_cast<microseconds>(system_clock::now().time_since_epoch())
 
 
+
+
 int main()
 {
 	WindowManager::init();
 	Controls::init();
 	ShaderManager::init();
 	RenderEngine::init();
+	Texture::init();
+
+	//Texture::textures["box2"] = new Texture((GLuint)2);
 
 	srand(time(0));
 
@@ -50,13 +55,6 @@ int main()
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
 
-
-	Texture::textures["box"] = new Texture("resources/box.png",
-		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture::textures["grass_a"] = new Texture("resources/billboardgrass.png",
-		GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	Texture::textures["noise"] = new Texture("resources/noiseTexture.png",
-		GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	
 	std::vector<glm::mat4> matrices;
 
@@ -95,8 +93,6 @@ int main()
 
 	scene2.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
-
-
 
 	scene2.lightMatrix =
 		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
@@ -152,8 +148,7 @@ int main()
 		matrices.push_back(matrix);
 	}
 
-	scene2.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass_a"], matrices));
-	//scene2.grass.push_back(new NodeInstansed(grass, grass1_texture, matrices2));
+	scene2.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass"], matrices));
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
@@ -174,7 +169,7 @@ int main()
 	Scene scene3;
 
 	scene3.terrain.loadHeightMap("resources/heightmap.hm");
-	scene3.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass_a"], matrices));
+	scene3.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass"], matrices));
 	scene3.SunDirection = glm::vec3(1, 1, 1);
 	scene3.lightMatrix =
 		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
@@ -188,19 +183,33 @@ int main()
 	slider sld(glm::vec2(0.45, 0.8), 0.5);
 	sld.setValue(0.15);
 
+	billboard bboard[3];
+	bboard[0].m_position = glm::vec2(-0.95f, -0.95f);
+	bboard[0].m_size = glm::vec2(0.5, 0.5);
+	bboard[1].m_position = glm::vec2(-0.40f, -0.95f);
+	bboard[1].m_size = glm::vec2(0.5, 0.5);
+	bboard[2].m_position = glm::vec2(0.15f, -0.95f);
+	bboard[2].m_size = glm::vec2(0.5, 0.5);
+
 	do
 	{
 
 		RenderEngine::render(*theScene);
 		theScene->update();
-
-		sld.update();
+		/*sld.update();
 		if (theScene->water)
-			theScene->water->setHeight(sld.value() * 10);
+			theScene->water->setHeight(sld.value() * 10);*/
 
 		glDisable(GL_CULL_FACE);
 		glUseProgram(ShaderManager::program2D);
-		sld.draw();
+		
+		Texture::textures["gColor"]->bind();
+		bboard[0].draw();
+		Texture::textures["gNormal"]->bind();
+		bboard[1].draw();
+		Texture::textures["gPosition"]->bind();
+		bboard[2].draw();
+
 		glEnable(GL_CULL_FACE);
 
 		Controls::update();
@@ -210,8 +219,6 @@ int main()
 	ShaderManager::terminate();
 	RenderEngine::terminate();
 	Texture::terminate();
-
-
-
+	
 	return 0;
 }

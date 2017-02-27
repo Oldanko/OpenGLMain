@@ -6,10 +6,14 @@ class Texture
 {
 	GLuint m_texture;
 public:
-	static std::map<char*, Texture*> textures;
-	Texture();
-	Texture(const char * path, GLuint wrap_s, GLuint wrap_t, GLuint min_filter, GLuint mag_filter);
-	void bind();
-	~Texture();
+	static std::map<std::string, Texture*> textures;
+	static void init();
 	static void terminate();
+
+	Texture(); 
+	Texture(GLuint texture);
+	Texture(const char * path, GLuint wrap_s, GLuint wrap_t, GLuint min_filter, GLuint mag_filter);
+	~Texture();
+
+	void bind();
 };

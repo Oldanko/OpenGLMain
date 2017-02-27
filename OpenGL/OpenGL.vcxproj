@@ -159,30 +159,19 @@
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fragment" />
-    <None Include="shader.vertex" />
-    <None Include="shader2D.fragment" />
-    <None Include="shader2D.vertex" />
-    <None Include="shaderDepth.vertex" />
-    <None Include="shaderDepthInstanced.vertex" />
-    <None Include="shaderEmpty.fragment" />
-    <None Include="shaderGlow.fragment" />
-    <None Include="shaderInstanced.vertex" />
-    <None Include="shaderShadow.fragment" />
-    <None Include="shaderShadow.vertex" />
-    <None Include="shaderShadowInstanced.vertex" />
-    <None Include="shaderTerrain.fragment" />
-    <None Include="shaderTerrain.vertex" />
-    <None Include="shaderTerrainDepth.vertex" />
-    <None Include="shaderTerrainShadow.fragment" />
-    <None Include="shaderTerrainShadow.vertex" />
-    <None Include="shaderWater.fragment" />
-    <None Include="shaderWater.vertex" />
-    <None Include="shaderWaterShadow.fragment" />
-    <None Include="shaderWaterShadow.vertex" />
+    <ResourceCompile Include="OpenGL.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="OpenGL.rc" />
+    <None Include="resources\Shaders\shader.fragment" />
+    <None Include="resources\Shaders\shader.vertex" />
+    <None Include="resources\Shaders\shader2D.fragment" />
+    <None Include="resources\Shaders\shader2D.vertex" />
+    <None Include="resources\Shaders\shaderInstanced.vertex" />
+    <None Include="resources\Shaders\shaderOld.fragment" />
+    <None Include="resources\Shaders\shaderTerrain.fragment" />
+    <None Include="resources\Shaders\shaderTerrain.vertex" />
+    <None Include="resources\Shaders\shaderTerrainOld.fragment" />
+    <None Include="resources\Textures\Textures.ls" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

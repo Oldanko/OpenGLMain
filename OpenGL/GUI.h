@@ -192,6 +192,19 @@ public:
 	}
 };
 
+class billboard
+{
+public:
+	glm::vec2 m_position;
+	glm::vec2 m_size = glm::vec2(0.5);
+	GLuint m_vao;
+
+	billboard();
+	~billboard();
+	void draw();
+
+};
+
 class GUI
 {
 public:
