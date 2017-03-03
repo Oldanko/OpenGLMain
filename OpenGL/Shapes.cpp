@@ -95,14 +95,20 @@ void loadBox(std::vector<float>& vertices, std::vector<unsigned int>& elements)
 	elements = e;
 }
 
-void loadPlane(std::vector<float>& vertices, std::vector<unsigned int>& elements)
+void loadPlain(std::vector<float>& vertices, std::vector<unsigned int>& elements)
 {
 	std::vector<float> v =
 	{
-		0.0, 0.0, 0.0,	0.0, 0.0,	0.0, 1.0, 0.0,
-		0.0, 0.0, 1.0,	0.0, 1.0,	0.0, 1.0, 0.0,
-		1.0, 0.0, 1.0,	1.0, 1.0,	0.0, 1.0, 0.0,
-		1.0, 0.0, 0.0,	1.0, 0.0,	0.0, 1.0, 0.0
+		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+		1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+		1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+		0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0
+
+		/*
+		0.0, 0.0, 0.0,	0.0, 0.0,	0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,	0.0, 1.0,	0.0, 0.0, 0.0,
+		1.0, 1.0, 0.0,	1.0, 1.0,	0.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,	1.0, 0.0,	0.0, 0.0, 0.0*/
 	};
 
 	std::vector<unsigned int> e =

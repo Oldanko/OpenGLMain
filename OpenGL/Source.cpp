@@ -38,23 +38,21 @@ int main()
 	RenderEngine::init();
 	Texture::init();
 
-	//Texture::textures["box2"] = new Texture((GLuint)2);
-
 	srand(time(0));
 
 	//Resources Managing
 	std::vector<float> vertices;
 	std::vector<unsigned int> elements;
 
+
 	loadGrassStar(vertices, elements);
 	Mesh grass(vertices, elements);
-
-	loadPlane(vertices, elements);
-	Mesh plain(vertices, elements);
-
+	
 	loadBox(vertices, elements);
 	Mesh box(vertices, elements);
 
+	loadPlain(vertices, elements);
+	Mesh plain(vertices, elements);
 	
 	std::vector<glm::mat4> matrices;
 
@@ -72,11 +70,12 @@ int main()
 	Scene scene;
 	scene.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(0), glm::vec3(rand(), rand(), rand()), glm::vec3(150)));
-	
+
 	scene.solidObjectsInstanced.push_back(new NodeInstansed(box, *Texture::textures["box"], matrices));
 
 	scene.glowingObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(50000, 2500, 50000), glm::vec3(0.0), glm::vec3(2000)));
+
 
 	scene.SunDirection = glm::vec3(1.0, 1.0, 1.0);
 
@@ -93,6 +92,27 @@ int main()
 
 	scene2.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_red"],
+		glm::vec3(70, 0, 70), glm::vec3(0, 0, 0), glm::vec3(32))); 
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_red"],
+			glm::vec3(102, 0, 70), glm::vec3(0, 3.14, 0), glm::vec3(32)));
+	
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_blue"],
+		glm::vec3(70, 0, 102), glm::vec3(0, 1.57, 0), glm::vec3(32)));
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_blue"],
+		glm::vec3(70, 0, 70), glm::vec3(0, -1.57, 0), glm::vec3(32)));
+
+
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_yellow"],
+		glm::vec3(70+32, -10, 70), glm::vec3(0, -1.57, 0), glm::vec3(32)));
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_yellow"],
+		glm::vec3(102, -10, 102), glm::vec3(0, 1.57, 0), glm::vec3(32)));
+
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_white"],
+		glm::vec3(70, 0, 102), glm::vec3(0, 0, 0), glm::vec3(32)));
+	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_white"],
+		glm::vec3(102, 0, 102), glm::vec3(0, 3.14, 0), glm::vec3(32)));
+
 
 	scene2.lightMatrix =
 		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
@@ -180,35 +200,35 @@ int main()
 
 	Scene * theScene = &scene2;
 
-	slider sld(glm::vec2(0.45, 0.8), 0.5);
-	sld.setValue(0.15);
-
-	billboard bboard[3];
+	billboard bboard[4];
 	bboard[0].m_position = glm::vec2(-0.95f, -0.95f);
-	bboard[0].m_size = glm::vec2(0.5, 0.5);
-	bboard[1].m_position = glm::vec2(-0.40f, -0.95f);
-	bboard[1].m_size = glm::vec2(0.5, 0.5);
-	bboard[2].m_position = glm::vec2(0.15f, -0.95f);
-	bboard[2].m_size = glm::vec2(0.5, 0.5);
+	bboard[0].m_size = glm::vec2(0.4, 0.4);
+	bboard[1].m_position = glm::vec2(-0.45f, -0.95f);
+	bboard[1].m_size = glm::vec2(0.4, 0.4);
+	bboard[2].m_position = glm::vec2(0.05f, -0.95f);
+	bboard[2].m_size = glm::vec2(0.4, 0.4);
+
+	bboard[3].m_position = glm::vec2(0.5f, -0.95f);
+	bboard[3].m_size = glm::vec2(0.4, 0.4);
 
 	do
 	{
 
 		RenderEngine::render(*theScene);
 		theScene->update();
-		/*sld.update();
-		if (theScene->water)
-			theScene->water->setHeight(sld.value() * 10);*/
-
+		
 		glDisable(GL_CULL_FACE);
 		glUseProgram(ShaderManager::program2D);
 		
+		glActiveTexture(GL_TEXTURE0);
 		Texture::textures["gColor"]->bind();
 		bboard[0].draw();
 		Texture::textures["gNormal"]->bind();
 		bboard[1].draw();
 		Texture::textures["gPosition"]->bind();
 		bboard[2].draw();
+		Texture::textures["depthMap"]->bind();
+		bboard[3].draw();
 
 		glEnable(GL_CULL_FACE);
 

@@ -18,6 +18,7 @@ void main()
 	FragCoord = (viewMatrix * worldSpaceCoords).xyz;
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
 	Normal = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normal);
+	Normal = Normal/2+vec3(0.5, 0.5, 0.5);
 
 	gl_Position = VP * worldSpaceCoords;
 }

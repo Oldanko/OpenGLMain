@@ -19,6 +19,15 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{b60931bd-cdbe-477c-92b6-7c950f8a2903}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\ShadowMapping">
+      <UniqueIdentifier>{05ed729d-6ac8-4737-9516-15723a1f0e95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Deffered Path">
+      <UniqueIdentifier>{a83fc565-0585-4adc-93e6-387cdaf7b4bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\GUI">
+      <UniqueIdentifier>{d8fed3aa-b066-4a80-bd9e-c8b3801beb25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -49,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodeInstansed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="List.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
@@ -98,12 +104,6 @@
     <ClInclude Include="NodeInstansed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,35 +126,35 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\Shaders\shader.fragment">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shader.vertex">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shader2D.fragment">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shader2D.vertex">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderInstanced.vertex">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderTerrain.fragment">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderTerrain.vertex">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="resources\Textures\Textures.ls">
       <Filter>Resource Files\Textures</Filter>
     </None>
-    <None Include="resources\Shaders\shaderOld.fragment">
+    <None Include="resources\Shaders\shaderLighting.vertex">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="resources\Shaders\shaderTerrainOld.fragment">
+    <None Include="resources\Shaders\shaderLighting.fragment">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\Shaders\shader.fragment">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shader.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderInstanced.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrain.fragment">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrain.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shader2D.fragment">
+      <Filter>Resource Files\Shaders\GUI</Filter>
+    </None>
+    <None Include="resources\Shaders\shader2D.vertex">
+      <Filter>Resource Files\Shaders\GUI</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -13,9 +13,11 @@ class RenderEngine
 	static GLuint MatrixID;
 	static GLuint ModelMatrixID;
 	static GLuint ViewMatrixID;
-	static GLuint gColorLocation;
-	static GLuint gNormalLocation;
-	static GLuint gPositionLocation;
+	static GLuint gColorID;
+	static GLuint gNormalID;
+	static GLuint gPositionID;
+
+
 	static GLuint LightDirectionID;
 
 
@@ -23,11 +25,8 @@ class RenderEngine
 	static void renderTerrain(Scene &scene, glm::mat4 &matrix, bool shadow);
 	static void renderInstanced(Scene &scene, glm::mat4 &matrix, bool shadow);
 	static void renderSolids(Scene &scene, glm::mat4 &matrix, bool shadow);
-	static void renderTerrainDeferred(Scene &scene, glm::mat4 &matrix, bool shadow);
-	static void renderInstancedDeferred(Scene &scene, glm::mat4 &matrix, bool shadow);
-	static void renderSolidsDeferred(Scene &scene, glm::mat4 &matrix, bool shadow);
+	static void renderShadowMap(Scene & scene);
 	//static void renderGlow(Scene &scene, glm::mat4 matrix);
-	//static void renderShadowMap(Scene & scene);
 	//static void renderWater(Scene &scene, glm::mat4 &matrix, bool shadow);
 public:
 	static void init();

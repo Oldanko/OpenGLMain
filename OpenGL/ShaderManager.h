@@ -10,17 +10,17 @@ public:
 	static GLuint programInstanced;
 	static GLuint programTerrain;
 
-	static GLuint programDeferred;
-	static GLuint programInstancedDeferred;
-	static GLuint programTerrainDeferred;
-
-	static GLuint program2D;
-	//static GLuint programWater;
-	/*static GLuint programGlow;
-
 	static GLuint programDepth;
 	static GLuint programDepthInstanced;
 	static GLuint programTerrainDepth;
+
+	static GLuint program2D;
+	
+	static GLuint programLighting;
+
+	//static GLuint programWater;
+	/*static GLuint programGlow;
+
 
 	static GLuint program2D;
 

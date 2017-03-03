@@ -89,8 +89,6 @@ void Texture::init()
 			break;
 		}
 		textures[name] = new Texture(path, wrap_s, wrap_t, min_filter, mag_filter);
-
-		std::cout << textures[name]->m_texture << "\n";
 	}
 	fclose(file);
 }

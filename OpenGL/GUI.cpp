@@ -24,14 +24,6 @@ GUI::~GUI()
 
 billboard::billboard()
 {
-	GLfloat vertices[] =
-	{
-		0.0f, 0.5f,
-		0.0f, 0.0f,
-		0.5f, 0.5f,
-		0.5f, 0.0f
-	};
-
 	glGenVertexArrays(1, &m_vao);
 }
 

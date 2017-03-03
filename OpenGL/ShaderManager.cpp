@@ -9,17 +9,17 @@ GLuint ShaderManager::program = 0;
 GLuint ShaderManager::programInstanced = 0;
 GLuint ShaderManager::programTerrain = 0;
 
-GLuint ShaderManager::programDeferred = 0;
-GLuint ShaderManager::programInstancedDeferred = 0;
-GLuint ShaderManager::programTerrainDeferred = 0;
 
 GLuint ShaderManager::program2D = 0;
 
-/*GLuint ShaderManager::programGlow = 0;
+GLuint ShaderManager::programLighting = 0;
 
 GLuint ShaderManager::programDepth = 0;
 GLuint ShaderManager::programDepthInstanced = 0;
 GLuint ShaderManager::programTerrainDepth = 0;
+
+/*GLuint ShaderManager::programGlow = 0;
+
 
 GLuint ShaderManager::program2D = 0;
 
@@ -31,29 +31,22 @@ GLuint ShaderManager::programTerrainShadow = 0;
 GLuint ShaderManager::programWater = 0;
 GLuint ShaderManager::programWaterShadow = 0;*/
 
-static GLuint program;
-static GLuint programInstanced;
-static GLuint programTerrain;
-
-static GLuint programDeferred;
-static GLuint programInstancedDeferred;
-static GLuint programTerrainDeferred;
-
-
 //const char * shadersLocation = "resources/shaders/";
 
 void ShaderManager::init()
 {
-	program = LoadShaders("resources/shaders/shader.vertex", "resources/shaders/shaderOld.fragment");
-	programInstanced = LoadShaders("resources/shaders/shaderInstanced.vertex", "resources/shaders/shaderOld.fragment");
-	programTerrain = LoadShaders("resources/shaders/shaderTerrain.vertex", "resources/shaders/shaderTerrainOld.fragment");
-
-	programDeferred = LoadShaders("resources/shaders/shader.vertex", "resources/shaders/shader.fragment");
-	programInstancedDeferred = LoadShaders("resources/shaders/shaderInstanced.vertex", "resources/shaders/shader.fragment");
-	programTerrainDeferred = LoadShaders("resources/shaders/shaderTerrain.vertex", "resources/shaders/shaderTerrain.fragment");
+	program = LoadShaders("resources/shaders/shader.vertex", "resources/shaders/shader.fragment");
+	programInstanced = LoadShaders("resources/shaders/shaderInstanced.vertex", "resources/shaders/shader.fragment");
+	programTerrain = LoadShaders("resources/shaders/shaderTerrain.vertex", "resources/shaders/shaderTerrain.fragment");
 
 	program2D = LoadShaders("resources/shaders/shader2D.vertex", "resources/shaders/shader2D.fragment");
-	
+
+	programLighting = LoadShaders("resources/shaders/shaderLighting.vertex", "resources/shaders/shaderLighting.fragment");
+
+	programDepth = LoadShaders("resources/shaders/shaderDepth.vertex", "resources/shaders/shaderEmpty.fragment");
+	programDepthInstanced = LoadShaders("resources/shaders/shaderDepthInstanced.vertex", "resources/shaders/shaderEmpty.fragment");
+	programTerrainDepth = LoadShaders("resources/shaders/shaderTerrainDepth.vertex", "resources/shaders/shaderEmpty.fragment");
+
 	/*programGlow = LoadShaders("shader.vertex", "shaderGlow.fragment");
 
 	programDepth = LoadShaders("shaderDepth.vertex", "shaderEmpty.fragment");
@@ -77,9 +70,6 @@ void ShaderManager::terminate()
 	glDeleteProgram(program);
 	glDeleteProgram(programInstanced);
 	glDeleteProgram(programTerrain);
-	glDeleteProgram(programDeferred);
-	glDeleteProgram(programInstancedDeferred);
-	glDeleteProgram(programTerrainDeferred);
 	glDeleteProgram(program2D);
 
 	/*glDeleteProgram(programGlow);

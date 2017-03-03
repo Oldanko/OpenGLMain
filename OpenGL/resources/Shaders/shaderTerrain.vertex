@@ -17,7 +17,9 @@ layout(location = 1) uniform mat4 viewMatrix;
 void main()
 {	
 	FragCoord = (viewMatrix * vec4(position.x, height, position.y, 1.0)).xyz;
-	Normal = normalize(mat3(transpose(inverse(viewMatrix))) * normal);
+	Normal = normalize((viewMatrix * vec4(normal, 0.0)).xyz);
+	Normal = Normal/2+vec3(0.5, 0.5, 0.5);
+
 	UV = position;
 	
 	Height = height;
