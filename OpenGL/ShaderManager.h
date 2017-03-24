@@ -10,28 +10,18 @@ public:
 	static GLuint programInstanced;
 	static GLuint programTerrain;
 
+	static GLuint programReflection;
+	static GLuint programInstancedReflection;
+	static GLuint programTerrainReflection;
+
 	static GLuint programDepth;
-	static GLuint programDepthInstanced;
+	static GLuint programInstancedDepth;
 	static GLuint programTerrainDepth;
 
 	static GLuint program2D;
 	
 	static GLuint programLighting;
 
-	//static GLuint programWater;
-	/*static GLuint programGlow;
-
-
-	static GLuint program2D;
-
-	static GLuint programShadow;
-	//static GLuint programShadowInstanced;
-
-	static GLuint programTerrain;
-	//static GLuint programTerrainShadow;
-
-	static GLuint programWater;
-	//static GLuint programWaterShadow;*/
 
 	static void init();
 	static void terminate();

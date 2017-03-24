@@ -20,14 +20,11 @@
 
 #include <glm\gtx\vector_angle.hpp>
 
-
 #include <chrono>
 
 using namespace std::chrono;
 
 #define NOW_MS duration_cast<microseconds>(system_clock::now().time_since_epoch())
-
-
 
 
 int main()
@@ -92,7 +89,8 @@ int main()
 
 	scene2.solidObjects.push_back(new Node(box, *Texture::textures["box"],
 		glm::vec3(256, 10, 256), glm::vec3(0.0, glm::degrees(90.0), 0.0), glm::vec3(15)));
-	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_red"],
+	
+	/*scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_red"],
 		glm::vec3(70, 0, 70), glm::vec3(0, 0, 0), glm::vec3(32))); 
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_red"],
 			glm::vec3(102, 0, 70), glm::vec3(0, 3.14, 0), glm::vec3(32)));
@@ -102,7 +100,6 @@ int main()
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_blue"],
 		glm::vec3(70, 0, 70), glm::vec3(0, -1.57, 0), glm::vec3(32)));
 
-
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_yellow"],
 		glm::vec3(70+32, -10, 70), glm::vec3(0, -1.57, 0), glm::vec3(32)));
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_yellow"],
@@ -111,8 +108,7 @@ int main()
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_white"],
 		glm::vec3(70, 0, 102), glm::vec3(0, 0, 0), glm::vec3(32)));
 	scene2.solidObjects.push_back(new Node(plain, *Texture::textures["wall_white"],
-		glm::vec3(102, 0, 102), glm::vec3(0, 3.14, 0), glm::vec3(32)));
-
+		glm::vec3(102, 0, 102), glm::vec3(0, 3.14, 0), glm::vec3(32)));*/
 
 	scene2.lightMatrix =
 		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *

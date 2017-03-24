@@ -28,6 +28,9 @@
     <Filter Include="Resource Files\Shaders\GUI">
       <UniqueIdentifier>{d8fed3aa-b066-4a80-bd9e-c8b3801beb25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Deffered Path\Reslection">
+      <UniqueIdentifier>{16768a87-9ca5-4f34-9319-bc20faf36a80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -155,6 +158,27 @@
     </None>
     <None Include="resources\Shaders\shader2D.vertex">
       <Filter>Resource Files\Shaders\GUI</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderWater.fragment">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderWater.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderInstancedRefl.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path\Reslection</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderRefl.fragment">
+      <Filter>Resource Files\Shaders\Deffered Path\Reslection</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderRefl.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path\Reslection</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrainRefl.fragment">
+      <Filter>Resource Files\Shaders\Deffered Path\Reslection</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrainRefl.vertex">
+      <Filter>Resource Files\Shaders\Deffered Path\Reslection</Filter>
     </None>
   </ItemGroup>
 </Project>

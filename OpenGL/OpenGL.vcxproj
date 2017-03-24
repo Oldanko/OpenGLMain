@@ -164,10 +164,17 @@
     <None Include="resources\Shaders\shader2D.fragment" />
     <None Include="resources\Shaders\shader2D.vertex" />
     <None Include="resources\Shaders\shaderInstanced.vertex" />
+    <None Include="resources\Shaders\shaderInstancedRefl.vertex" />
     <None Include="resources\Shaders\shaderLighting.fragment" />
     <None Include="resources\Shaders\shaderLighting.vertex" />
+    <None Include="resources\Shaders\shaderRefl.fragment" />
+    <None Include="resources\Shaders\shaderRefl.vertex" />
     <None Include="resources\Shaders\shaderTerrain.fragment" />
     <None Include="resources\Shaders\shaderTerrain.vertex" />
+    <None Include="resources\Shaders\shaderTerrainRefl.fragment" />
+    <None Include="resources\Shaders\shaderTerrainRefl.vertex" />
+    <None Include="resources\Shaders\shaderWater.fragment" />
+    <None Include="resources\Shaders\shaderWater.vertex" />
     <None Include="resources\Textures\Textures.ls" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
