@@ -3,6 +3,7 @@
 #include "ShaderManager.h"
 #include <iostream>
 #include <glm\gtx\transform.hpp>
+#include "Texture.h"
 
 
 glm::vec3 intersection(glm::vec3 p1, glm::vec3 v1, glm::vec3 p2, glm::vec3 v2)
@@ -87,16 +88,43 @@ void Water::PrepareFrameBuffer()
 	glGenFramebuffers(2, m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[0]);
 
-	glGenTextures(1, &m_reflectionTex);
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glGenTextures(3, m_reflectionTex);
+	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTex[0], 0);
+
+	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_reflectionTex[1], 0);
+
+	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_reflectionTex[2], 0);
+
+	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+
+	Texture::textures["gColorRefl"] = new Texture(m_reflectionTex[0]);
+	Texture::textures["gNormalRefl"] = new Texture(m_reflectionTex[1]);
+	Texture::textures["gPositionRefl"] = new Texture(m_reflectionTex[2]);
 
 	glGenRenderbuffers(1, &m_reflectionRbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_reflectionRbo);
@@ -110,8 +138,8 @@ void Water::PrepareFrameBuffer()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[1]);
 
-	glGenTextures(1, &m_refractionTex);
-	glBindTexture(GL_TEXTURE_2D, m_refractionTex);
+	glGenTextures(1, &m_refractionTex[3]);
+	glBindTexture(GL_TEXTURE_2D, m_refractionTex[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -119,7 +147,7 @@ void Water::PrepareFrameBuffer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_refractionTex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_refractionTex[0], 0);
 
 	glGenRenderbuffers(1, &m_refractionRbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_refractionRbo);
@@ -135,27 +163,24 @@ void Water::PrepareFrameBuffer()
 
 void Water::bindReflectionTexture()
 {
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
+	//glBindTexture(GL_TEXTURE_2D, m_reflectionTex);
 }
 
 void Water::bindRefractionTexture()
 {
-	glBindTexture(GL_TEXTURE_2D, m_refractionTex);
+	//glBindTexture(GL_TEXTURE_2D, m_refractionTex);
 }
 
 void Water::calculateMatrices(Camera & camera)
 {
 	glm::vec3 target = camera.position();
 	glm::vec3 POV = camera.cameraGlobalPosition();
-	float rotation = camera.angles().y;
 
-	m_reflectionMatrix = WindowManager::projectionMatrix() * glm::lookAt(
-		glm::vec3(POV.x, m_height - POV.y, POV.z),
-		glm::vec3(target.x, m_height - target.y, target.z),
+	m_reflectionMatrix = glm::lookAt(
+		glm::vec3(POV.x, m_height + m_height - POV.y, POV.z),
+		glm::vec3(target.x, m_height + m_height - target.y, target.z),
 		glm::vec3(0, -1, 0)
 		);
-
-	m_refractionMatrix = WindowManager::projectionMatrix() * camera.ViewMatrix();
 }
 
 float Water::height()
@@ -165,7 +190,6 @@ float Water::height()
 
 void Water::draw()
 {
-	//glUniform1f(glGetUniformLocation(ShaderManager::programWater, "height"), m_height);
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -177,9 +201,9 @@ Water::~Water()
 	glDeleteBuffers(1, &m_vbo);
 	glDeleteBuffers(1, &m_ebo);
 	glDeleteFramebuffers(2, m_fbo);
-	glDeleteTextures(1, &m_reflectionTex);
+	glDeleteTextures(3, m_reflectionTex);
 	glDeleteRenderbuffers(1, &m_reflectionRbo);
-	glDeleteTextures(1, &m_refractionTex);
+	glDeleteTextures(3, m_refractionTex);
 	glDeleteRenderbuffers(1, &m_refractionRbo);
 
 }

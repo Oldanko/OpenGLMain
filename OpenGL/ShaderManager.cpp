@@ -8,6 +8,7 @@
 GLuint ShaderManager::program = 0;
 GLuint ShaderManager::programInstanced = 0;
 GLuint ShaderManager::programTerrain = 0;
+GLuint ShaderManager::programWater = 0;
 
 GLuint ShaderManager::programReflection = 0;
 GLuint ShaderManager::programInstancedReflection = 0;
@@ -27,6 +28,7 @@ void ShaderManager::init()
 	program = LoadShaders("resources/shaders/shader.vertex", "resources/shaders/shader.fragment");
 	programInstanced = LoadShaders("resources/shaders/shaderInstanced.vertex", "resources/shaders/shader.fragment");
 	programTerrain = LoadShaders("resources/shaders/shaderTerrain.vertex", "resources/shaders/shaderTerrain.fragment");
+	programWater = LoadShaders("resources/shaders/shaderWater.vertex", "resources/shaders/shaderWater.fragment");
 
 	programReflection = LoadShaders("resources/shaders/shaderRefl.vertex", "resources/shaders/shaderRefl.fragment");
 	programInstancedReflection = LoadShaders("resources/shaders/shaderInstancedRefl.vertex", "resources/shaders/shaderRefl.fragment");

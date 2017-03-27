@@ -4,10 +4,10 @@ in vec3 FragCoord;
 in vec3 Normal;
 in vec2 TexCoord;
 
-layout(location = 0)out vec4 outColor;
+layout(location = 0)out vec3 outColor;
 layout(location = 1)out vec3 outNormal;
 layout(location = 2)out vec3 outPosition;
-layout(location = 3)out vec3 outMaterial;
+layout(location = 3)out float outMaterial;
 
 uniform sampler2D Texture;
 
@@ -18,7 +18,8 @@ void main()
 
 	vec3 color = texture(Texture, TexCoord).rgb;
 		
-	outColor = vec4(color, 1.0f);
+	outColor = color;
 	outNormal = Normal;
 	outPosition = FragCoord;
+	outMaterial = 0.5;
 }

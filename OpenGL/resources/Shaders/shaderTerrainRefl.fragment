@@ -11,12 +11,18 @@ layout(location = 0)out vec4 outColor;
 layout(location = 1)out vec3 outNormal;
 layout(location = 2)out vec3 outPosition;
 
+uniform vec3 surfPosition;
+uniform vec3 surfNormal;
+
 uniform sampler2D noiseTex;
 
 vec3 TerrainColor();
 
 void main()
 {
+	if(dot(surfNormal, FragCoord - surfPosition) > 0)
+		discard;
+
 	float noise = texture(noiseTex, UV/256).x;
 	noise /= 5;
 	noise += 0.9;

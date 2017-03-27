@@ -9,6 +9,7 @@ public:
 	static GLuint program;
 	static GLuint programInstanced;
 	static GLuint programTerrain;
+	static GLuint programWater;
 
 	static GLuint programReflection;
 	static GLuint programInstancedReflection;

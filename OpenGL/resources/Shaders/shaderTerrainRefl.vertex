@@ -25,6 +25,5 @@ void main()
 	Height = height;
 	Slope = max(dot(normalize(normal), vec3(0.0, 1.0, 0.0)), 0.0);
 
-	gl_Position = VP*vec4(position.x, height, position.y, 1);
-	
+	gl_Position = VP*vec4(position.x, height, position.y, 1);	
 }

@@ -7,9 +7,10 @@ in vec2 UV;
 in float Height;
 in float Slope;
 
-layout(location = 0)out vec4 outColor;
+layout(location = 0)out vec3 outColor;
 layout(location = 1)out vec3 outNormal;
 layout(location = 2)out vec3 outPosition;
+layout(location = 3)out float outMaterial;
 
 uniform sampler2D noiseTex;
 
@@ -22,9 +23,10 @@ void main()
 	noise += 0.9;
 	vec3 color = TerrainColor() * noise;
 
-	outColor = vec4(color, 1.0f);
+	outColor = color;
 	outNormal = Normal;
 	outPosition = FragCoord;
+	outMaterial = 1.0;
 }
 
 

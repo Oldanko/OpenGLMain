@@ -14,11 +14,10 @@ layout(location = 2) uniform mat4 modelMatrix;
 
 void main()
 {
-	vec4 worldSpaceCoord = modelMatrix * vec4(position, 1);
-	FragCoord = (viewMatrix * worldSpaceCoord).xyz;
+	vec4 worldSpaceCoords = modelMatrix * vec4(position, 1);
+	FragCoord = (viewMatrix * worldSpaceCoords).xyz;
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
 	Normal = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normal);
-	Normal = Normal/2+vec3(0.5, 0.5, 0.5);
 	
-	gl_Position = VP * worldSpaceCoord;
+	gl_Position = VP * worldSpaceCoords;
 }
