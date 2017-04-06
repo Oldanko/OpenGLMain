@@ -3,8 +3,8 @@
 
 class RenderEngine
 {
-	static GLuint depthMapFBO;
-	static GLuint depthMap;
+	static GLuint shadowMapFBO;
+	static GLuint shadowMap;
 
 	static GLuint gFBO; 
 	static GLuint gRBO;

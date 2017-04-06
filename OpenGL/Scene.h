@@ -5,7 +5,7 @@
 #include "Terrain.h"
 #include "Camera.h"
 #include "Water.h"
-
+#include "Vegitation.h"
 
 class Scene
 {
@@ -16,10 +16,15 @@ public:
 	Water * water;
 	std::vector<Node*> solidObjects;
 	std::vector<Node*> glowingObjects;
-	std::vector<NodeInstansed*> grass;
+
+	//grassPatch* grasspatch;
+	Vegitation * grass;
+
+	//std::vector<NodeInstansed*> grass;
 	std::vector<NodeInstansed*> solidObjectsInstanced;
 	glm::mat4 lightMatrix;
 	glm::vec3 SunDirection;
+
 
 	void update();
 

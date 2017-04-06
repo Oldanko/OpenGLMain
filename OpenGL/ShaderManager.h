@@ -22,6 +22,7 @@ public:
 	static GLuint program2D;
 	
 	static GLuint programLighting;
+	static GLuint programLightingReflection;
 
 
 	static void init();

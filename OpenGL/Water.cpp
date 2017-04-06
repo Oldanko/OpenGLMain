@@ -85,61 +85,11 @@ void Water::PrepareVertexArray()
 
 void Water::PrepareFrameBuffer()
 {
-	glGenFramebuffers(2, m_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[0]);
+	glGenFramebuffers(1, &m_gFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_gFBO);
 
-	glGenTextures(3, m_reflectionTex);
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[0]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTex[0], 0);
-
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[1]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_reflectionTex[1], 0);
-
-	glBindTexture(GL_TEXTURE_2D, m_reflectionTex[2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_reflectionTex[2], 0);
-
-	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-	glDrawBuffers(3, attachments);
-
-	Texture::textures["gColorRefl"] = new Texture(m_reflectionTex[0]);
-	Texture::textures["gNormalRefl"] = new Texture(m_reflectionTex[1]);
-	Texture::textures["gPositionRefl"] = new Texture(m_reflectionTex[2]);
-
-	glGenRenderbuffers(1, &m_reflectionRbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_reflectionRbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_reflectionRbo); 
-	
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!\n";
-
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[1]);
-
-	glGenTextures(1, &m_refractionTex[3]);
-	glBindTexture(GL_TEXTURE_2D, m_refractionTex[0]);
+	glGenTextures(3, m_gTex);
+	glBindTexture(GL_TEXTURE_2D, m_gTex[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -147,16 +97,98 @@ void Water::PrepareFrameBuffer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_refractionTex[0], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_gTex[0], 0);
 
-	glGenRenderbuffers(1, &m_refractionRbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_refractionRbo);
+	glBindTexture(GL_TEXTURE_2D, m_gTex[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_gTex[1], 0);
+
+	glBindTexture(GL_TEXTURE_2D, m_gTex[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_gTex[2], 0);
+
+	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+
+	Texture::textures["gColorRefl"] = new Texture(m_gTex[0]);
+	Texture::textures["gNormalRefl"] = new Texture(m_gTex[1]);
+	Texture::textures["gPositionRefl"] = new Texture(m_gTex[2]);
+
+	glGenRenderbuffers(1, &m_gRbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_gRbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_refractionRbo);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_gRbo);
+	
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!\n";
+
+
+	glGenTextures(2, m_tex);
+	glGenRenderbuffers(2, m_rbo);
+
+	glGenFramebuffers(2, m_fbo);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[0]);
+
+	glBindTexture(GL_TEXTURE_2D, m_tex[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_tex[0], 0);
+
+	GLuint attachment = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &attachment);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, m_rbo[0]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo[0]);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!\n";
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[1]);
+
+	glBindTexture(GL_TEXTURE_2D, m_tex[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1280, 720, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_tex[1], 0);
+
+	glDrawBuffers(1, &attachment);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, m_rbo[1]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo[1]);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!\n";
+
+
+	Texture::textures["Refl"] = new Texture(m_tex[0]);
+	Texture::textures["Refr"] = new Texture(m_tex[1]);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -200,10 +232,13 @@ Water::~Water()
 	glDeleteVertexArrays(1, &m_vao);
 	glDeleteBuffers(1, &m_vbo);
 	glDeleteBuffers(1, &m_ebo);
+	glDeleteFramebuffers(1, &m_gFBO);
+	glDeleteTextures(3, m_gTex);
+	glDeleteRenderbuffers(1, &m_gRbo);
+
 	glDeleteFramebuffers(2, m_fbo);
-	glDeleteTextures(3, m_reflectionTex);
-	glDeleteRenderbuffers(1, &m_reflectionRbo);
-	glDeleteTextures(3, m_refractionTex);
-	glDeleteRenderbuffers(1, &m_refractionRbo);
+	glDeleteTextures(2, m_tex);
+	glDeleteRenderbuffers(2, m_rbo);
+
 
 }

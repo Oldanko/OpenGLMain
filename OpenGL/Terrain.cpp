@@ -128,6 +128,12 @@ float Terrain::findHeight(glm::vec2 position)
 	float x = position.x - X;
 	float y = position.y - Y;
 
+	if (X < 0 || Y < 0)
+		return 0.0f;
+
+	if (X > m_size || Y > m_size)
+		return 0.0f;
+
 	int target = X*m_size + Y;
 	float a = m_heightmap[target];
 	float b = m_heightmap[target + 1];
@@ -149,6 +155,12 @@ glm::vec2 Terrain::findSlope(glm::vec2 position)
 	float Y = floor(position.y);
 	float x = position.x - X;
 	float y = position.y - Y;
+
+	if (X < 0 || Y < 0)
+		return glm::vec2();
+
+	if (X >= m_size || Y >= m_size)
+		return glm::vec2();
 
 
 	int target = X*m_size + Y;

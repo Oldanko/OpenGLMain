@@ -1,55 +1,120 @@
 #include <iostream>
 
-
+#include <thread>
+#include <mutex>
 
 using namespace std;
 
 typedef unsigned char ubyte;
+typedef unsigned short ushort;
 typedef unsigned int uint;
 
-ubyte elem[][7] = {	{ 0, 0, 0, 0, 0, 0, 0 },
-					{ 0, 0, 1, 1, 1, 0, 0 },
-					{ 0, 1, 1, 1, 1, 1, 0 }};
+ubyte elem[3][6] = {{ 0, 0, 0, 0, 0, 0 },
+					{ 0, 1, 1, 1, 0, 0 },
+					{ 1, 2, 2, 2, 1, 0 }};
 
-ubyte mask[] = { 0, 1, 2, 2, 2, 1, 0 };
+ubyte mask[6] = { 1, 2, 2, 2, 1, 0 };
 
-class placeholder
+class grassPatch
 {
+	static const int q = 1024;
+	static const int size = 16;
+	float grass[q];
+	int x;
+	int y;
+	bool update_needed;
+	bool updated;
+
+	mutex update_mtx;
+
 public:
-	int ba;
-	static uint num;
-	placeholder()
+
+	grassPatch()
 	{
-		ba = 1;
-		num++;
+		x = INT_MIN; y = INT_MIN;
+		update_needed = true;
+		updated = false;
 	}
-	~placeholder()
+	grassPatch(int _x, int _y)
 	{
-		num--;
+		x = INT_MIN; y = INT_MIN;
+		init(_x, _y);
+	}
+	void init(int _x, int _y)
+	{
+		if (x == _x && y == _y)
+			return;
+
+		x = _x;
+		y = _y;
+
+		update_mtx.lock();
+		update_needed = true;
+		updated = false;
+		update_mtx.unlock();
+	}
+	void update()
+	{
+		update_mtx.lock();
+		if (update_needed)
+		{
+			update_needed = false;
+			update_mtx.unlock();
+		}
+		else
+		{
+			update_mtx.unlock();
+			return;
+		}
+
+		for (int i = 0; i < q; i++)
+		{
+			if (i % 32 == 31)
+			{
+				update_mtx.lock();
+				if (update_needed)
+				{
+					update_mtx.unlock();
+					return;
+				}
+				update_mtx.unlock();
+			}
+			grass[i] = rand();
+		}
+
+		update_mtx.lock();
+		updated = true;
+		update_mtx.unlock();
 	}
 };
 
-uint placeholder::num = 0;
+
 
 class Tiles
 {
+	static const ubyte tilesNum = 6;
+	int x;
+	int y;
+
+
 public:
-	placeholder* tiles[7][7];
+	grassPatch * tiles[tilesNum][tilesNum];
 	Tiles()
 	{
-		for (int i = 0; i < 7; i++)
-			for (int j = 0; j < 7; j++)
-			{
-				if (elem[mask[i]][j])
-					tiles[i][j] = new placeholder();
-				else
-					tiles[i][j] = nullptr;
-			}
+		x = 0; 
+		y = 0;
+
+		int _x = x - tilesNum / 2 + 1;
+		int _y = y - tilesNum / 2 + 1;
+
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
+				tiles[i][j] = new grassPatch(_x + i, _y + j);
 	}
 	~Tiles()
 	{
-		for (int i = 0; i < 7; i++)
-			for (int j = 0; j < 7; j++)
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
 			{
 				if(tiles[i][j])
 					delete tiles[i][j];
@@ -58,105 +123,126 @@ public:
 
 	void North()
 	{
-		for (int j = 0; j < 7; j++)
-		{
-			if (tiles[6][j])
-				delete tiles[6][j];
+		y++;
 
-			tiles[6][j] = nullptr;
-		}
+		int _x = x - tilesNum / 2 + 1;
+		int _y = y - tilesNum / 2 + 1;
+		
+		grassPatch * buff[tilesNum];
 
-		for(int i = 6; i > 0; i--)
-				for (int j = 0; j < 7; j++)
-				{
-					tiles[i][j] = tiles[i - 1][j];
-					if (!tiles[i][j] && elem[mask[i]][j])
-						tiles[i][j] = new placeholder();
-				}
-			
-		for (int j = 0; j < 7; j++)
-		{
-			if(tiles[0][j])
-				tiles[0][j] = nullptr;
+		for (int i = 0; i < tilesNum; i++)
+			buff[i] = tiles[i][0];
 
-		}
+		for(int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum-1; j++)
+			{
+				tiles[i][j] = tiles[i][j+1];
+			}
+		
+		for (int i = 0; i < tilesNum; i++)
+			tiles[i][tilesNum - 1] = buff[i];
+
+
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
+				if (elem[mask[i]][j])
+					tiles[i][j]->init(_x + i, _y + j);
 	}
 
 	void South()
 	{
-		for (int j = 0; j < 7; j++)
-		{
-			if (tiles[0][j])
-				delete tiles[0][j];
+		y--;
 
-			tiles[0][j] = nullptr;
-		}
+		int _x = x - tilesNum / 2 + 1;
+		int _y = y - tilesNum / 2 + 1;
 
-		for (int i = 0; i < 6; i++)
-			for (int j = 0; j < 7; j++)
+		grassPatch * buff[tilesNum];
+
+		for (int i = 0; i < tilesNum; i++)
+			buff[i] = tiles[i][tilesNum - 1];
+
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = tilesNum - 1; j > 0; j--)
 			{
-				tiles[i][j] = tiles[i + 1][j];
-				if (!tiles[i][j] && elem[mask[i]][j])
-					tiles[i][j] = new placeholder();
+				tiles[i][j] = tiles[i][j - 1];
 			}
 
-		for (int j = 0; j < 7; j++)
-		{
-			if (tiles[6][j])
-				tiles[6][j] = nullptr;
+		for (int i = 0; i < tilesNum; i++)
+			tiles[i][0] = buff[i];
 
-		}
+
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
+				if (elem[mask[i]][j])
+					tiles[i][j]->init(_x + i, _y + j);
+	}
+	
+	void East()
+	{
+		x++;
+
+		int _x = x - tilesNum / 2 + 1;
+		int _y = y - tilesNum / 2 + 1;
+
+		grassPatch * buff[tilesNum];
+
+		for (int i = 0; i < tilesNum; i++)
+			buff[i] = tiles[0][i];
+
+		for (int i = 0; i < tilesNum-1; i++)
+			for (int j = 0; j < tilesNum; j++)
+			{
+				tiles[i][j] = tiles[i+1][j];
+			}
+
+		for (int i = 0; i < tilesNum; i++)
+			tiles[tilesNum - 1][i] = buff[i];
+
+
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
+				if (elem[mask[i]][j])
+					tiles[i][j]->init(_x + i, _y + j);
 	}
 
 	void West()
 	{
-		for (int i = 0; i < 7; i++)
-		{
-			if (tiles[i][6])
-				delete tiles[i][6];
+		x--;
 
-			tiles[i][6] = nullptr;
-		}
+		int _x = x - tilesNum / 2 + 1;
+		int _y = y - tilesNum / 2 + 1;
 
-		for (int i = 0; i < 7; i++)
-			for (int j = 6; j > 0; j--)
+		grassPatch * buff[tilesNum];
+		
+		for (int i = 0; i < tilesNum; i++)
+			buff[i] = tiles[tilesNum-1][i];
+		
+		for (int i = tilesNum - 1; i > 0 ; i--)
+			for (int j = 0; j < tilesNum; j++)
 			{
-				tiles[i][j] = tiles[i][j - 1];
-				if (!tiles[i][j] && elem[mask[i]][j])
-					tiles[i][j] = new placeholder();
+				tiles[i][j] = tiles[i - 1][j];
 			}
+		
+		for (int i = 0; i < tilesNum; i++)
+			tiles[0][i] = buff[i];
 
-		for (int i = 0; i < 7; i++)
-		{
-			if (tiles[i][0])
-				tiles[i][0] = nullptr;
 
-		}
+		for (int i = 0; i < tilesNum; i++)
+			for (int j = 0; j < tilesNum; j++)
+				if (elem[mask[i]][j])
+					tiles[i][j]->init(_x + i, _y + j);
 	}
 
-	void East()
+	void update()
 	{
-		for (int i = 0; i < 7; i++)
+		int it = 0;
+
+		for (int i = 0; i < tilesNum; i++)
 		{
-			if (tiles[i][0])
-				delete tiles[i][0];
-
-			tiles[i][0] = nullptr;
-		}
-
-		for (int i = 0; i < 7; i++)
-			for (int j = 0; j < 6; j++)
+			for (auto tile : tiles[i])
 			{
-				tiles[i][j] = tiles[i][j+1];
-				if (!tiles[i][j] && elem[mask[i]][j])
-					tiles[i][j] = new placeholder();
+				tile->update();
 			}
-
-		for (int i = 0; i < 7; i++)
-		{
-			if (tiles[i][6])
-				tiles[i][6] = nullptr;
-
 		}
 	}
 };
@@ -166,40 +252,16 @@ void test()
 {
 	Tiles t;
 
-	auto printMap = [&t]()
+	for (int i = 0; i < 100000; i++)
 	{
-		for (int i = 0; i < 7; i++)
-		{
-			for (int j = 0; j < 7; j++)
-			{
-				if (t.tiles[i][j])
-					std::cout << t.tiles[i][j]->ba << " ";
-				else
-					std::cout << 0 << " ";
-			}
-			std::cout << "\n";
-		}
-		std::cout << "\n";
-	};
 
+	}
 
-	printMap();
-	
-	t.West();
-	printMap();
-	t.West();
-	printMap();
-	
-	t.East();
-	printMap();
-	t.East();
-	printMap();
-	
+	t.update();
 }
 
 void main()
 {
 	test();
-	std::cout << placeholder::num << "\n";
 }
 

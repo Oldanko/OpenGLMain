@@ -136,6 +136,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Vegitation.cpp" />
     <ClCompile Include="Water.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="Shapes.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Vegitation.h" />
     <ClInclude Include="Water.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
@@ -167,6 +169,8 @@
     <None Include="resources\Shaders\shaderInstancedRefl.vertex" />
     <None Include="resources\Shaders\shaderLighting.fragment" />
     <None Include="resources\Shaders\shaderLighting.vertex" />
+    <None Include="resources\Shaders\shaderLightingRefl.fragment" />
+    <None Include="resources\Shaders\shaderLightingRefl.vertex" />
     <None Include="resources\Shaders\shaderRefl.fragment" />
     <None Include="resources\Shaders\shaderRefl.vertex" />
     <None Include="resources\Shaders\shaderTerrain.fragment" />

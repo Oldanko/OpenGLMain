@@ -7,12 +7,14 @@ in vec2 UV;
 in float Height;
 in float Slope;
 
-layout(location = 0)out vec4 outColor;
+uniform uint isReflection;
+
+layout(location = 0)out vec3 outColor;
 layout(location = 1)out vec3 outNormal;
 layout(location = 2)out vec3 outPosition;
 
-uniform vec3 surfPosition;
-uniform vec3 surfNormal;
+layout(location = 3) uniform vec3 surfPosition;
+layout(location = 4) uniform vec3 surfNormal;
 
 uniform sampler2D noiseTex;
 
@@ -28,9 +30,10 @@ void main()
 	noise += 0.9;
 	vec3 color = TerrainColor() * noise;
 
-	outColor = vec4(color, 1.0f);
+	outColor = color;
 	outNormal = Normal;
 	outPosition = FragCoord;
+
 }
 
 

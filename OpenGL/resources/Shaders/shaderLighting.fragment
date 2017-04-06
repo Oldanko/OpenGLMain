@@ -11,6 +11,7 @@ uniform sampler2D Material;
 uniform sampler2D ShadowMap;
 
 uniform sampler2D reflection;
+uniform sampler2D refraction;
 
 layout(location = 3) uniform vec3 LightDirection;
 layout(location = 1) uniform mat4 ToLightMatrix;
@@ -19,22 +20,41 @@ float ShadowCalculation(vec3 position, vec3 normal);
 
 void main()
 {
-	vec3 color = texture(Color, UV).rgb;
-	
+
 	if(texture(Material, UV).r == 0)
-		color = texture(reflection, vec2(1 - UV.x, UV.y)).rgb;
+	{
+		vec3 normal = texture(Normal, UV).rgb;
+		if(normal == vec3(0,0,0))
+			discard;
+		vec3 position = texture(Position, UV).rgb;
 
-	vec3 normal = texture(Normal, UV).rgb;
-	if(normal == vec3(0,0,0))
-		discard;
+		vec3 refl = texture(reflection, UV).rgb;
+		vec3 refr = texture(refraction, UV).rgb;
 
-	vec3 position = texture(Position, UV).rgb;
+		float angle = exp(log(dot(normalize(-position), normal))/3);
+		
+		//outColor = vec4((refl * (1-angle) + refr * angle)* 0.9 + vec3(0.0, 0.0, 0.1), 1.0);
 
-	float diffuse = max(dot(normal, LightDirection), 0.0);
-	float ambient = 0.1f;
+		
+		vec3 reflSunDir = reflect(normalize(-LightDirection), normal);
+		float spec = pow(max(dot(normalize(-position), reflSunDir), 0), 32) * ShadowCalculation(position, normal);
+		outColor = vec4((refl * (1-angle) + refr * angle)* 0.9 + vec3(0.0, 0.0, 0.1) + spec * 0.5 * vec3(2.0, 1.8, 0.8), 1.0);
+
+	}
+	else
+	{
+		vec3 normal = texture(Normal, UV).rgb;
+		if(normal == vec3(0,0,0))
+			discard;
+
+		vec3 color = texture(Color, UV).rgb;
+		vec3 position = texture(Position, UV).rgb;
+
+		float diffuse = max(dot(normal, LightDirection), 0.0);
+		float ambient = 0.1f;
 	
-	outColor = vec4(color * diffuse * ShadowCalculation(position, normal) + color * ambient, 1.0f);
-
+		outColor = vec4(color * diffuse * ShadowCalculation(position, normal) + color * ambient, 1.0f);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

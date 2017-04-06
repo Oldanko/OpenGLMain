@@ -17,6 +17,7 @@ GLuint ShaderManager::programTerrainReflection = 0;
 GLuint ShaderManager::program2D = 0;
 
 GLuint ShaderManager::programLighting = 0;
+GLuint ShaderManager::programLightingReflection = 0;
 
 GLuint ShaderManager::programDepth = 0;
 GLuint ShaderManager::programInstancedDepth = 0;
@@ -37,6 +38,7 @@ void ShaderManager::init()
 	program2D = LoadShaders("resources/shaders/shader2D.vertex", "resources/shaders/shader2D.fragment");
 
 	programLighting = LoadShaders("resources/shaders/shaderLighting.vertex", "resources/shaders/shaderLighting.fragment");
+	programLightingReflection = LoadShaders("resources/shaders/shaderLightingRefl.vertex", "resources/shaders/shaderLightingRefl.fragment");
 
 	programDepth = LoadShaders("resources/shaders/shaderDepth.vertex", "resources/shaders/shaderEmpty.fragment");
 	programInstancedDepth = LoadShaders("resources/shaders/shaderDepthInstanced.vertex", "resources/shaders/shaderEmpty.fragment");

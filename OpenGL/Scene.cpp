@@ -13,12 +13,13 @@ void Scene::update()
 	for (int i = 0; i < glowingObjects.size(); i++)
 		glowingObjects[i]->calculateMatrices();
 
-
+	if (grass)
+		grass->update(camera.cameraGlobalPosition().x, camera.cameraGlobalPosition().z);
 }
 
 Scene::Scene()
 {
-
+	grass = nullptr;
 	water = nullptr;
 }
 
@@ -31,7 +32,12 @@ Scene::~Scene()
 		delete solidObjectsInstanced[i];
 	for (int i = 0; i < glowingObjects.size(); i++)
 		delete glowingObjects[i];
-	for (int i = 0; i < grass.size(); i++)
-		delete grass[i];
-	delete water;
+	/*for (int i = 0; i < grass.size(); i++)
+		delete grass[i];*/
+	//if (grasspatch)
+		//delete grasspatch;
+	if (grass)
+		delete grass;
+	if (water)
+		delete water;
 }

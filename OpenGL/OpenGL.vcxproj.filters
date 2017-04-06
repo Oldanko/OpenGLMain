@@ -78,6 +78,9 @@
     <ClCompile Include="GUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Vegitation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -122,6 +125,9 @@
     <ClInclude Include="GUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Vegitation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenGL.rc">
@@ -131,12 +137,6 @@
   <ItemGroup>
     <None Include="resources\Textures\Textures.ls">
       <Filter>Resource Files\Textures</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderLighting.vertex">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderLighting.fragment">
-      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="resources\Shaders\shader.fragment">
       <Filter>Resource Files\Shaders\Deffered Path</Filter>
@@ -179,6 +179,18 @@
     </None>
     <None Include="resources\Shaders\shaderTerrainRefl.vertex">
       <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderLighting.fragment">
+      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderLighting.vertex">
+      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderLightingRefl.fragment">
+      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderLightingRefl.vertex">
+      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
     </None>
   </ItemGroup>
 </Project>

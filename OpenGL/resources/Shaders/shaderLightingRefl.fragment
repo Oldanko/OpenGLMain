@@ -1,0 +1,74 @@
+#version 430 core
+
+in vec2 UV;
+
+out vec4 outColor;
+
+uniform sampler2D Color;
+uniform sampler2D Normal;
+uniform sampler2D Position;
+uniform sampler2D Material;
+uniform sampler2D ShadowMap;
+
+uniform uint isReflection;
+
+layout(location = 3) uniform vec3 LightDirection;
+layout(location = 1) uniform mat4 ToLightMatrix;
+
+float ShadowCalculation(vec3 position, vec3 normal);
+
+void main()		
+{
+	vec2 uv = UV;
+	if(isReflection == 1)
+		uv.x = 1 - uv.x;
+
+	if(texture(Material, UV).r != 0)
+		discard;
+
+	vec3 normal = texture(Normal, uv).rgb;
+	if(normal == vec3(0,0,0))
+		discard;
+
+	vec3 color = texture(Color, uv).rgb;
+	vec3 position = texture(Position, uv).rgb;
+
+	float diffuse = max(dot(normal, LightDirection), 0.0);
+	float ambient = 0.1f;
+	
+	outColor = vec4(color * diffuse * ShadowCalculation(position, normal) + color * ambient, 1.0f);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float ShadowCalculation(vec3 position, vec3 normal)
+{
+
+	vec4 fragPositionLightSpace = ToLightMatrix * vec4(position, 1.0);
+
+	vec3 projCoords = fragPositionLightSpace.xyz / fragPositionLightSpace.w;//if Ortho : meaningless
+	
+	projCoords = projCoords * 0.5f + 0.5f;
+
+	//float closestDepth = texture(ShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+
+	float bias = 0.003;
+	//float bias = max(0.05 * (1.0 - dot(normal, LightDirection)), 0.003);
+	
+
+	for(float x = -1; x <= 1; x += 0.5)
+	{
+		for(float y = -1; y <= 1; y += 0.5)
+		{
+			float pcfDepth = texture(ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}    
+	}
+	shadow /= 25.0;
+
+	return 1 - shadow;
+}

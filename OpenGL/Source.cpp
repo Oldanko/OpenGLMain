@@ -34,6 +34,8 @@ int main()
 	ShaderManager::init();
 	RenderEngine::init();
 	Texture::init();
+	grassPatch::init();
+
 
 	srand(time(0));
 
@@ -164,7 +166,7 @@ int main()
 		matrices.push_back(matrix);
 	}
 
-	scene2.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass"], matrices));
+	scene2.grass = new Vegitation(grass, *Texture::textures["grass"], scene2.terrain);
 
 	//Add magic boxes of levitation
 	matrices = std::vector<glm::mat4>();
@@ -182,55 +184,43 @@ int main()
 
 	scene2.water = new Water(glm::vec2(0), glm::vec2(512), 1.4f);
 
-	Scene scene3;
-
-	scene3.terrain.loadHeightMap("resources/heightmap.hm");
-	scene3.grass.push_back(new NodeInstansed(grass, *Texture::textures["grass"], matrices));
-	scene3.SunDirection = glm::vec3(1, 1, 1);
-	scene3.lightMatrix =
-		glm::ortho(-350.0f, 350.0f, -350.0f, 350.0f, 10.0f, 1000.0f) *
-		glm::lookAt(glm::vec3(600.0, 600.0, 600.0),
-			glm::vec3(250.0, 0.0, 250.0),
-			glm::vec3(0.0, 1.0, 0.0));
-
 
 	Scene * theScene = &scene2;
 
 	billboard bboard[4];
 	bboard[0].m_position = glm::vec2(-0.95f, -0.95f);
 	bboard[0].m_size = glm::vec2(0.4, 0.4);
+	
 	bboard[1].m_position = glm::vec2(-0.45f, -0.95f);
 	bboard[1].m_size = glm::vec2(0.4, 0.4);
+
 	bboard[2].m_position = glm::vec2(0.05f, -0.95f);
 	bboard[2].m_size = glm::vec2(0.4, 0.4);
 
 	bboard[3].m_position = glm::vec2(0.5f, -0.95f);
 	bboard[3].m_size = glm::vec2(0.4, 0.4);
 
+	uint frame = 0;
+
 	do
 	{
-
 		RenderEngine::render(*theScene);
 		theScene->update();
 		
+		frame++;
+
 		glDisable(GL_CULL_FACE);
 		glUseProgram(ShaderManager::program2D);
-		
 		glActiveTexture(GL_TEXTURE0);
-		/*Texture::textures["gColorRefl"]->bind();
-		bboard[0].draw();
-		Texture::textures["gNormalRefl"]->bind();
-		bboard[1].draw();
-		Texture::textures["gPositionRefl"]->bind();
-		bboard[2].draw();*/
-		Texture::textures["gColor"]->bind();
+
+		/*Texture::textures["gColor"]->bind();
 		bboard[0].draw();
 		Texture::textures["gNormal"]->bind();
 		bboard[1].draw();
 		Texture::textures["gPosition"]->bind();
 		bboard[2].draw();
-		Texture::textures["gColorRefl"]->bind();
-		bboard[3].draw();
+		Texture::textures["Refr"]->bind();
+		bboard[3].draw();*/
 
 		glEnable(GL_CULL_FACE);
 
@@ -238,6 +228,7 @@ int main()
 
 	} while (WindowManager::update());
 
+	grassPatch::terminate();
 	ShaderManager::terminate();
 	RenderEngine::terminate();
 	Texture::terminate();
