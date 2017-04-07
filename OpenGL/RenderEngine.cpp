@@ -22,7 +22,6 @@ GLuint RenderEngine::gNormalID = 1;
 GLuint RenderEngine::gPositionID = 2;
 
 
-
 void RenderEngine::renderSolids(Scene & scene, glm::mat4 & matrix)
 {
 	GLuint *program = &ShaderManager::program;
@@ -35,6 +34,7 @@ void RenderEngine::renderSolids(Scene & scene, glm::mat4 & matrix)
 	for (int i = 0; i < scene.solidObjects.size(); i++)
 	{
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
+		glActiveTexture(GL_TEXTURE0);
 		scene.solidObjects[i]->draw();
 	}
 }
@@ -231,42 +231,6 @@ void RenderEngine::renderShadowMap(Scene & scene)
 
 }
 
-/*void RenderEngine::renderWater(Scene & scene, glm::mat4 & matrix, bool shadow)
-{
-	if (scene.water)
-	{
-		GLuint *program = shadow ? &ShaderManager::programWaterShadow : &ShaderManager::programWater;
-
-		glUseProgram(ShaderManager::programWaterShadow);
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(*program, "V"), 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
-
-		glUniform1i(glGetUniformLocation(*program, "reflection"), 0);
-		glUniform1i(glGetUniformLocation(*program, "refraction"), 1);
-
-		glUniform3fv(glGetUniformLocation(*program, "CamPosition"), 1, (float*)&scene.camera.cameraGlobalPosition());
-		glUniform3fv(LightDirectionID, 1, &scene.SunDirection[0]);
-
-		if (shadow)
-		{
-			//glUniformMatrix4fv(LightMatrixID, 1, GL_FALSE, &(scene.lightMatrix)[0][0]);
-			glUniform1i(glGetUniformLocation(*program, "shadowMap"), 3);
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
-		}
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, scene.water->m_reflectionTex);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, scene.water->m_refractionTex);
-
-		scene.water->draw();
-
-		glActiveTexture(GL_TEXTURE0);
-	}
-}*/
-
 void RenderEngine::init()
 {
 	glGenFramebuffers(1, &shadowMapFBO);
@@ -295,7 +259,7 @@ void RenderEngine::init()
 
 	glGenTextures(1, &gColor);
 	glBindTexture(GL_TEXTURE_2D, gColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WindowManager::width(), WindowManager::height(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, WindowManager::width(), WindowManager::height(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -317,7 +281,7 @@ void RenderEngine::init()
 
 	glGenTextures(1, &gPosition);
 	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, WindowManager::width(), WindowManager::height(), 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WindowManager::width(), WindowManager::height(), 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -365,17 +329,8 @@ void RenderEngine::init()
 	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Normal"), 1);
 	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Position"), 2);
 	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Material"), 3); 
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "reflection"), 4);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "refraction"), 5);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "ShadowMap"), 6);
+	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "ShadowMap"), 4);
 
-
-	glUseProgram(ShaderManager::programLightingReflection);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "Color"), 0);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "Normal"), 1);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "Position"), 2);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "Material"), 3);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "ShadowMap"), 4);
 
 	glUseProgram(ShaderManager::programReflection);
 	glUniform1i(glGetUniformLocation(ShaderManager::programReflection, "Texture"), 0);
@@ -416,8 +371,8 @@ void RenderEngine::render(Scene & scene)
 	glBindFramebuffer(GL_FRAMEBUFFER, gFBO);
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -426,12 +381,12 @@ void RenderEngine::render(Scene & scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderWater(scene, VP);
-	renderSolids(scene, VP);
+	//renderSolids(scene, VP);
 	renderInstanced(scene, VP);
 	renderTerrain(scene, VP);
 
 	// /////////////////////////////////////
-	
+	/*
 	auto deferredPathRefl= [&scene, &VP](bool isReflection) {
 		glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_gFBO);
 		glViewport(0, 0, WindowManager::width(), WindowManager::height());
@@ -451,7 +406,7 @@ void RenderEngine::render(Scene & scene)
 		renderInstancedReflection(scene, VP, isReflection);
 	};
 	auto lightingPathRefl = [&scene](GLuint fbo, glm::mat4 &matrix, GLuint isReflection) {
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);// scene.water->m_fbo[0]);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		glViewport(0, 0, WindowManager::width(), WindowManager::height());
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -494,17 +449,15 @@ void RenderEngine::render(Scene & scene)
 
 	deferredPathRefl(false);
 	lightingPathRefl(scene.water->m_fbo[1], scene.camera.ViewMatrix(), 0);
-	
+	*/
 	// /////////////////////////////////////
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
+	/*glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
+	*/
 	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -519,14 +472,13 @@ void RenderEngine::render(Scene & scene)
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, gMaterial);
 	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, scene.water->m_tex[0]);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, scene.water->m_tex[1]);
-	glActiveTexture(GL_TEXTURE6);
 	glBindTexture(GL_TEXTURE_2D, shadowMap);
 
 	glUniform3fv(LightDirectionID, 1, &glm::normalize(glm::vec3(scene.camera.ViewMatrix() * glm::vec4(scene.SunDirection, 0.0)))[0]);
 	glUniformMatrix4fv(1, 1, GL_FALSE, &(scene.lightMatrix * inverse(scene.camera.ViewMatrix()))[0][0]);
 	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	renderSolids(scene, VP);
+
 }

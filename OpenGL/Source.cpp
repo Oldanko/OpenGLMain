@@ -213,14 +213,14 @@ int main()
 		glUseProgram(ShaderManager::program2D);
 		glActiveTexture(GL_TEXTURE0);
 
-		/*Texture::textures["gColor"]->bind();
+		Texture::textures["gColorRefl"]->bind();
 		bboard[0].draw();
-		Texture::textures["gNormal"]->bind();
-		bboard[1].draw();
-		Texture::textures["gPosition"]->bind();
-		bboard[2].draw();
-		Texture::textures["Refr"]->bind();
-		bboard[3].draw();*/
+		//Texture::textures["gNormal"]->bind();
+		//bboard[1].draw();
+		//Texture::textures[""]->bind();
+		//bboard[2].draw();
+		//Texture::textures["Refr"]->bind();
+		//bboard[3].draw();
 
 		glEnable(GL_CULL_FACE);
 

@@ -6,7 +6,7 @@ in vec2 UV;
 
 layout(location = 0)out vec3 outColor;
 layout(location = 1)out vec3 outNormal;
-layout(location = 2)out vec3 outPosition;
+layout(location = 2)out vec4 outPosition;
 layout(location = 3)out float outMaterial;
 
 
@@ -15,7 +15,7 @@ void main()
 {
 	outColor = vec3(0.2, 0.7, 0.9);
 	outNormal = Normal;
-	outPosition = FragCoord;
+	outPosition = vec4(FragCoord, gl_FragCoord.z);
 	
 	outMaterial = 0.0;
 }

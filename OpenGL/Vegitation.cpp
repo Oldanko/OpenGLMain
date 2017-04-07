@@ -53,11 +53,23 @@ grassPatch::grassPatch(int _x, int _y, Mesh & mesh, Texture & texture, Terrain &
 	matrices = new glm::mat4[q];
 	for (int i = 0; i < q; i++)
 	{
+		auto slope = m_terrain.findSlope(coords[i] + glm::vec2(x*size, y*size));
+		if (glm::length(slope) > 0.3)
+		{
+			matrices[i][3][3] = 0;
+			continue;
+		}
+
+		auto height = m_terrain.findHeight(coords[i] + glm::vec2(x*size, y*size));
+		if (height < 1.4)
+		{
+			matrices[i][3][3] = 0;
+			continue;
+		}
+
 		matrices[i][3][0] = coords[i].x + x*size;
 		matrices[i][3][2] = coords[i].y + y*size;
-		matrices[i][3][1] = m_terrain.findHeight(coords[i] + glm::vec2(x*size, y*size));
-
-		auto slope = m_terrain.findSlope(coords[i] + glm::vec2(x*size, y*size));
+		matrices[i][3][1] = height;
 
 		matrices[i] *= glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
 			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2, 1.5, 2));
@@ -154,13 +166,28 @@ void grassPatch::updateAsynch()
 			update_mtx.unlock();
 		}
 
+
+
+
+		auto slope = m_terrain.findSlope(coords[i] + glm::vec2(x*size, y*size));
+		if (glm::length(slope) > 0.3)
+		{
+			matrices[i][3][3] = 0;
+			continue;
+		}
+
+		auto height = m_terrain.findHeight(coords[i] + glm::vec2(x*size, y*size));
+		if (height < 1.4)
+		{
+			matrices[i][3][3] = 0;
+			continue;
+		}
+
 		matrices[i] = glm::mat4();
 
 		matrices[i][3][0] = coords[i].x + x*size;
 		matrices[i][3][2] = coords[i].y + y*size;
-		matrices[i][3][1] = m_terrain.findHeight(coords[i] + glm::vec2(x*size, y*size));
-
-		auto slope = m_terrain.findSlope(coords[i] + glm::vec2(x*size, y*size));
+		matrices[i][3][1] = height;
 
 		matrices[i] *= glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
 			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2, 1.5, 2));
@@ -187,7 +214,6 @@ bool grassPatch::update()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_matrixBuffer);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, q * sizeof(glm::mat4), &matrices[0]);
-		//cout << glGetError() << "\n";
 		update_mtx.unlock();
 		updated = true;
 		return true;
