@@ -8,9 +8,7 @@ GLuint RenderEngine::shadowMap;
 GLuint RenderEngine::gFBO;
 GLuint RenderEngine::gRBO;
 GLuint RenderEngine::gColor;
-GLuint RenderEngine::gNormal;
-GLuint RenderEngine::gPosition;
-GLuint RenderEngine::gMaterial;
+GLuint RenderEngine::gNormPos;
 
 GLuint RenderEngine::MatrixID = 0;
 GLuint RenderEngine::ViewMatrixID = 1;
@@ -18,8 +16,7 @@ GLuint RenderEngine::ModelMatrixID = 2;
 GLuint RenderEngine::LightDirectionID = 3;
 
 GLuint RenderEngine::gColorID = 0;
-GLuint RenderEngine::gNormalID = 1;
-GLuint RenderEngine::gPositionID = 2;
+GLuint RenderEngine::gNormPosID = 1;
 
 
 void RenderEngine::renderSolids(Scene & scene, glm::mat4 & matrix)
@@ -259,7 +256,8 @@ void RenderEngine::init()
 
 	glGenTextures(1, &gColor);
 	glBindTexture(GL_TEXTURE_2D, gColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, WindowManager::width(), WindowManager::height(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, WindowManager::width(), WindowManager::height());
+	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -268,18 +266,18 @@ void RenderEngine::init()
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gColor, 0);
 
-	glGenTextures(1, &gNormal);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, WindowManager::width(), WindowManager::height(), 0, GL_RGB, GL_FLOAT, NULL);
+	glGenTextures(1, &gNormPos);
+	glBindTexture(GL_TEXTURE_2D, gNormPos);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32UI, WindowManager::width(), WindowManager::height());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormPos, 0);
 
-	glGenTextures(1, &gPosition);
+	/*glGenTextures(1, &gPosition);
 	glBindTexture(GL_TEXTURE_2D, gPosition);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WindowManager::width(), WindowManager::height(), 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -288,21 +286,10 @@ void RenderEngine::init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gPosition, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gPosition, 0);*/
 
-	glGenTextures(1, &gMaterial);
-	glBindTexture(GL_TEXTURE_2D, gMaterial);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, WindowManager::width(), WindowManager::height(), 0, GL_RED, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMaterial, 0);
-
-	GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-	glDrawBuffers(4, attachments);
+	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 
 	glGenRenderbuffers(1, &gRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, gRBO);
@@ -318,18 +305,14 @@ void RenderEngine::init()
 	std::cout << gColor << "\n";
 
 	Texture::textures["gColor"] = new Texture(gColor);
-	Texture::textures["gNormal"] = new Texture(gNormal);
-	Texture::textures["gPosition"] = new Texture(gPosition);
-	Texture::textures["gMaterial"] = new Texture(gMaterial);
+	Texture::textures["gNormPos"] = new Texture(gNormPos);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	glUseProgram(ShaderManager::programLighting);
 	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Color"), 0);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Normal"), 1);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Position"), 2);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "Material"), 3); 
-	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "ShadowMap"), 4);
+	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "NormPos"), 1);
+	glUniform1i(glGetUniformLocation(ShaderManager::programLighting, "ShadowMap"), 2);
 
 
 	glUseProgram(ShaderManager::programReflection);
@@ -350,9 +333,7 @@ void RenderEngine::terminate()
 	glDeleteFramebuffers(1, &shadowMapFBO);
 
 	glDeleteTextures(1, &gColor);
-	glDeleteTextures(1, &gNormal);
-	glDeleteTextures(1, &gPosition);
-	glDeleteTextures(1, &gMaterial);
+	glDeleteTextures(1, &gNormPos);
 
 	glDeleteFramebuffers(1, &gFBO);
 	glDeleteRenderbuffers(1, &gRBO);
@@ -455,9 +436,6 @@ void RenderEngine::render(Scene & scene)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
 
-	/*glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	*/
 	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -466,12 +444,8 @@ void RenderEngine::render(Scene & scene)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gColor);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glBindTexture(GL_TEXTURE_2D, gNormPos);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, gMaterial);
-	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, shadowMap);
 
 	glUniform3fv(LightDirectionID, 1, &glm::normalize(glm::vec3(scene.camera.ViewMatrix() * glm::vec4(scene.SunDirection, 0.0)))[0]);

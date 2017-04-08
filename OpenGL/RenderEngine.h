@@ -8,14 +8,13 @@ class RenderEngine
 
 	static GLuint gFBO; 
 	static GLuint gRBO;
-	static GLuint gColor, gNormal, gPosition, gMaterial;
+	static GLuint gColor, gNormPos;
 	
 	static GLuint MatrixID;
 	static GLuint ModelMatrixID;
 	static GLuint ViewMatrixID;
 	static GLuint gColorID;
-	static GLuint gNormalID;
-	static GLuint gPositionID;
+	static GLuint gNormPosID;
 	
 	static GLuint LightDirectionID;
 	

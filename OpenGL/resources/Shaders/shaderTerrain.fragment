@@ -8,9 +8,8 @@ in float Height;
 in float Slope;
 
 layout(location = 0)out vec3 outColor;
-layout(location = 1)out vec3 outNormal;
-layout(location = 2)out vec4 outPosition;
-layout(location = 3)out float outMaterial;
+layout(location = 1)out uvec4 outNormPos;
+layout(location = 2)out float outMaterial;
 
 uniform sampler2D noiseTex;
 
@@ -30,8 +29,13 @@ void main()
 	vec3 color = TerrainColor() * noise;
 		
 	outColor = color;
-	outNormal = Normal;
-	outPosition = vec4(FragCoord, gl_FragCoord.z);
+	
+	outNormPos = uvec4(0);
+	outNormPos.x = packHalf2x16(Normal.xy);
+	outNormPos.y = packHalf2x16(vec2(Normal.z, FragCoord.x));
+	outNormPos.z = packHalf2x16(FragCoord.yz);
+	outNormPos.a = floatBitsToUint(gl_FragCoord.z);
+
 	outMaterial = 1.0;
 }
 

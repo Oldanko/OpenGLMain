@@ -5,9 +5,7 @@ in vec2 UV;
 out vec4 outColor;
 
 uniform sampler2D Color;
-uniform sampler2D Normal;
-uniform sampler2D Position;
-uniform sampler2D Material;
+uniform usampler2D NormPos;
 uniform sampler2D ShadowMap;
 
 layout(location = 3) uniform vec3 LightDirection;
@@ -17,17 +15,24 @@ float ShadowCalculation(vec3 position, vec3 normal);
 
 void main()
 {
-		vec3 normal = texture(Normal, UV).rgb;
+		uvec4 data = texture(NormPos, UV).rgba;
+
+		//unpackHalf2x16();
+		vec2 temp = unpackHalf2x16(data.y);
+
+		vec3 normal = vec3(unpackHalf2x16(data.x), temp.x);
+		vec3 position = vec3(temp.y, unpackHalf2x16(data.z));		
 
 		if(normal == vec3(0,0,0))
 			discard;
 
 		vec3 color = texture(Color, UV).rgb;
-		vec4 position = texture(Position, UV).rgba;
+
+
 		float diffuse = max(dot(normal, LightDirection), 0.0);
 		float ambient = 0.1f;
 	
-		gl_FragDepth = position.a;
+		gl_FragDepth = uintBitsToFloat(data.a);
 
 		outColor = vec4(color * diffuse * ShadowCalculation(position.xyz, normal) + color * ambient, 1.0f);
 }
