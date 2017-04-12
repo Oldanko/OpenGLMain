@@ -47,34 +47,10 @@ grassPatch::grassPatch(int _x, int _y, Mesh & mesh, Texture & texture, Terrain &
 	x = _x;
 	y = _y;
 
-	update_needed = false;
-	updated = true;
+	update_needed = true;
+	updated = false;
 
 	matrices = new glm::mat4[q];
-	for (int i = 0; i < q; i++)
-	{
-		auto slope = m_terrain.findSlope(coords[i] + glm::vec2(x*size, y*size));
-		if (glm::length(slope) > 0.3)
-		{
-			matrices[i][3][3] = 0;
-			continue;
-		}
-
-		auto height = m_terrain.findHeight(coords[i] + glm::vec2(x*size, y*size));
-		if (height < 1.4)
-		{
-			matrices[i][3][3] = 0;
-			continue;
-		}
-
-		matrices[i][3][0] = coords[i].x + x*size;
-		matrices[i][3][2] = coords[i].y + y*size;
-		matrices[i][3][1] = height;
-
-		matrices[i] *= glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
-			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2, 1.5, 2));
-	}
-
 	glGenBuffers(1, &m_matrixBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_matrixBuffer);
 	glBufferData(GL_ARRAY_BUFFER, q * sizeof(glm::mat4), &matrices[0], GL_DYNAMIC_DRAW);
@@ -368,8 +344,8 @@ void Vegitation::West()
 
 void Vegitation::update(float _x, float _y)
 {
-	int X = _x / 32;
-	int Y = _y / 32;
+	int X = _x / grassPatch::size;
+	int Y = _y / grassPatch::size;
 
 	if (y < Y)
 	{

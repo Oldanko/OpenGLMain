@@ -23,8 +23,6 @@ typedef unsigned int uint;
 
 class grassPatch
 {
-	static const int q;
-	static const int size;
 	static glm::vec2 coords[];
 
 	GLuint m_matrixBuffer;
@@ -43,6 +41,8 @@ class grassPatch
 	mutex update_mtx;
 
 public:
+	static const int q;
+	static const int size;
 
 	static void init();
 	static void terminate();

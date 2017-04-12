@@ -86,7 +86,7 @@ void Camera::rotateLeft(float a)
 
 void Camera::moveForward(float a)
 {
-	glm::vec2 direction = glm::normalize(/*glm::vec2(0)*/ -glm::vec2(m_cameraPosition.x, m_cameraPosition.z));
+	glm::vec2 direction = glm::normalize(-glm::vec2(m_cameraPosition.x, m_cameraPosition.z));
 	m_position.x += a * m_speed * direction.x* sqrt(m_shoulder);
 	m_position.z += a * m_speed * direction.y* sqrt(m_shoulder);
 	m_matrixShouldBeCalculated = true;
@@ -95,7 +95,7 @@ void Camera::moveForward(float a)
 
 void Camera::moveLeft(float a)
 {
-	glm::vec2 direction = glm::normalize(/*glm::vec2(0)*/ - glm::vec2(m_cameraPosition.x, m_cameraPosition.z));
+	glm::vec2 direction = glm::normalize(-glm::vec2(m_cameraPosition.x, m_cameraPosition.z));
 	m_position.z -= a * m_speed * direction.x* sqrt(m_shoulder);
 	m_position.x += a * m_speed * direction.y* sqrt(m_shoulder);
 	m_matrixShouldBeCalculated = true;

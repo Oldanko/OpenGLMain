@@ -17,10 +17,18 @@ void Scene::update()
 		grass->update(camera.cameraGlobalPosition().x, camera.cameraGlobalPosition().z);
 }
 
+void Scene::powUpdate()
+{
+}
+
 Scene::Scene()
 {
 	grass = nullptr;
 	water = nullptr;
+
+	pov.setPosition(glm::vec3(0, 100, 0));
+	pov.setDirection(glm::normalize(glm::vec3(256, -100, 256)));
+	pov.update();
 }
 
 

@@ -9,7 +9,6 @@ in float Slope;
 
 layout(location = 0)out vec3 outColor;
 layout(location = 1)out uvec4 outNormPos;
-layout(location = 2)out float outMaterial;
 
 uniform sampler2D noiseTex;
 
@@ -22,7 +21,6 @@ void main()
 	noise += texture(noiseTex, UV/128).x;
 	noise /= 2;
 	noise += texture(noiseTex, UV/64).x;
-
 	noise /= 5;
 	noise += 0.9;
 	
@@ -36,7 +34,6 @@ void main()
 	outNormPos.z = packHalf2x16(FragCoord.yz);
 	outNormPos.a = floatBitsToUint(gl_FragCoord.z);
 
-	outMaterial = 1.0;
 }
 
 

@@ -11,8 +11,8 @@ class Water
 	float m_height;
 public:
 	glm::mat4 m_reflectionMatrix;
-	GLuint m_gFBO, m_gTex[3], m_gRbo,
-		m_fbo[2], m_tex[2], m_rbo[2];
+	GLuint m_gFBO, m_gTex[2], m_gRbo,
+		m_fbo, m_tex, m_rbo;
 	Water();
 	Water(glm::vec2 A, glm::vec2 B, float height);
 	void PrepareVertexArray();

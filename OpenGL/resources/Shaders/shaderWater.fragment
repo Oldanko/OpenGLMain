@@ -1,24 +1,92 @@
 #version 430 core
 
 in vec3 FragCoord;
-in vec3 Normal;
+//in vec3 Normal;
+in mat3 TBN;
 in vec2 UV;
 
-layout(location = 0)out vec3 outColor;
-layout(location = 1)out uvec4 outNormPos;
-layout(location = 2)out float outMaterial;
 
+uniform sampler2D Color;
+uniform usampler2D NormPos;
+uniform sampler2D ShadowMap;
+uniform sampler2D Reflection;
+uniform sampler2D NormalMap; 
 
+layout(location = 1) uniform mat4 viewMatrix;
+
+layout(location = 4) uniform vec3 LightDirection;
+layout(location = 5) uniform float time;
+
+out vec4 outColor;
+
+float near = 1.0f;
+float far = 100000.0f;
+
+float linearZ(float z)
+{
+	float Z = z * 2.0 - 1.0;
+	return (2.0 * near * far) / (far + near - Z * (far - near));
+}
+
+float transperency(float depth)
+{
+	return (1/(depth/2 + 1) - 1)/ (1/100 - 1);
+}
 
 void main()
 {
-	outColor = vec3(0.2, 0.7, 0.9);
+	vec2 uv = vec2(gl_FragCoord.x/1280,gl_FragCoord.y/720);
 
-	outNormPos = uvec4(0);
-	outNormPos.x = packHalf2x16(Normal.xy);
-	outNormPos.y = packHalf2x16(vec2(Normal.z, FragCoord.x));
-	outNormPos.z = packHalf2x16(FragCoord.yz);
-	outNormPos.a = floatBitsToUint(gl_FragCoord.z);
+	uvec4 data = texture(NormPos, uv).rgba;
+	vec2 temp = unpackHalf2x16(data.y);
+		
+	vec3 normal = vec3(unpackHalf2x16(data.x), temp.x);
+	vec3 position = vec3(temp.y, unpackHalf2x16(data.z));		
 	
-	outMaterial = 0.0;
+
+	vec3 color = texture(Color, uv).rgb;
+	
+
+	vec3 nBig = texture(NormalMap, UV/32).rgb;
+	nBig = normalize(vec3((nBig.r*4 - 2), nBig.b, (nBig.g*4 - 2)));
+	vec3 nSmall = texture(NormalMap, UV/5).rgb;
+	nSmall = normalize(vec3((nSmall.r*4 - 2), nSmall.b, (nSmall.g*4 - 2)));
+
+	vec3 Normal = normalize(nBig/4 + nSmall);
+	Normal = normalize(mat3(viewMatrix)*Normal);
+
+	//Normal = normalize(TBN * Normal);
+
+	float depth = linearZ(uintBitsToFloat(data.a)) - linearZ(gl_FragCoord.z);
+
+
+	uv += (Normal.rb*0.02)*clamp(depth/10, 0, 1);
+
+	vec3 reflection = texture(Reflection, uv).rgb;
+
+
+
+	vec3 viewDir = normalize(-FragCoord);
+	vec3 reflSunDir = reflect(normalize(-LightDirection), Normal);
+
+	float angle = exp(log(abs(dot(viewDir, Normal))));
+	//float angle = 0.5-exp(-clamp(dot(viewDir, Normal), 0, 1)/2)+1;
+	//float angle = dot(viewDir, Normal);
+	//angle = sqrt(clamp(angle, 0, 1));
+	
+
+	float spec = pow(max(dot(viewDir, reflSunDir), 0), 32);
+
+	
+	vec3 underWater = vec3(75/255, 35/255.0, 35/255.0);
+	float t = transperency(depth);
+	//vec4(30/255.0, 20/255.0, 10/255.0, -exp(-depth)+1 );
+
+
+	//outColor = vec4(reflection, 1.0)*(1-angle) + underWater*(angle) + vec4(vec3(spec), 1.0);
+
+	outColor = vec4(reflection*(1-angle) + underWater*angle*t + vec3(spec), t);
+
+	//outColor = vec4(vec3(texture(NormalMap, UV).g * 2 - 1), 1.0);
+	//outColor = vec4(vec3(spec), 1.0);
 }

@@ -15,9 +15,7 @@ void main()
 	if(texture(Texture, TexCoord).a < 0.7)
 		discard;
 
-	vec3 color = texture(Texture, TexCoord).rgb;
-
-	outColor = color;
+	outColor = texture(Texture, TexCoord).rgb;
 
 	outNormPos = uvec4(0);
 	outNormPos.x = packHalf2x16(Normal.xy);

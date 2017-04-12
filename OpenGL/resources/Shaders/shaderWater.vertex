@@ -3,19 +3,37 @@
 layout(location = 0) in vec2 position;
 
 out vec3 FragCoord;
-out vec3 Normal;
+out mat3 TBN;
 out vec2 UV;
 
 layout(location = 0) uniform mat4 VP;
 layout(location = 1) uniform mat4 viewMatrix;
 layout(location = 2) uniform float height;
-layout(location = 3) uniform vec3 normal;
 
 
 void main()
 {	
+	mat3 MV3x3 = mat3(viewMatrix);
+
+	vec3 normal = vec3(0.0, 1.0, 0.0);
+	vec3 tangent = vec3(0.0, 0.0, 1.0);
+	vec3 bitangent = vec3(1.0, 0.0, 0.0);
+
+	//vec3 normalCamspace = normalize(MV3x3 * normal);
+	//vec3 tangentCamspace = normalize(MV3x3 * tangent);
+	//vec3 bitangentCamspace = normalize(MV3x3 * bitangent);
+
+	vec3 normalCamspace = MV3x3 * normal;
+	vec3 tangentCamspace = MV3x3 * tangent;
+	vec3 bitangentCamspace = MV3x3 * bitangent;
+
+	TBN = mat3(
+		tangentCamspace,
+		bitangentCamspace,
+		normalCamspace
+	);
+
 	FragCoord = (viewMatrix * vec4(position.x, height, position.y, 1.0)).xyz;
-	Normal = normalize((viewMatrix * vec4(normal, 0.0)).xyz);
 	UV = position;
 	
 	gl_Position = VP*vec4(position.x, height, position.y, 1);

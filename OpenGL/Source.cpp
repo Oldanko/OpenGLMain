@@ -118,54 +118,7 @@ int main()
 			glm::vec3(250.0, 0.0, 250.0),
 			glm::vec3(0.0, 1.0, 0.0));
 
-	//Plant Grass
-	matrices = std::vector<glm::mat4>(0);
-	std::vector<glm::mat4> matrices2;
-	for (int i = 0; i < 10000; i++)
-	{
-		float x = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX / 2;
-		float y = (float)(scene2.terrain.size() - 1) * rand() / RAND_MAX / 2;
-		float h = scene2.terrain.findHeight(glm::vec2(x, y));
-		
-		glm::vec2 slope = scene2.terrain.findSlope(glm::vec2(x, y));
-
-		if (glm::length(slope) > 0.3)
-		{
-			i--;
-			continue;
-		}
-
-		if (h < 2.0f || (h < 2.5 && rand() % 2 == 0))
-		{
-			if (h > 1.0 || (h > 0.8 && rand() % 2 == 0))
-			{
-				if (rand() % 3 == 0)
-				{
-					float r = float(rand()) * 0.1 / INT_MAX;
-
-					glm::mat4 matrix =
-						glm::translate(glm::vec3(x, h, y)) *
-						glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
-						glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
-						glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
-						glm::scale(glm::vec3(0.2 + r, 0.2 + r, 0.2 + r));
-					matrices2.push_back(matrix);
-				}
-				continue;
-			}
-			i--;
-			continue;
-		}
-
-		glm::mat4 matrix =
-			glm::translate(glm::vec3(x, h, y)) *
-			glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
-			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0))*
-			glm::rotate(float(rand()), glm::vec3(0, 1, 0))*
-			glm::scale(glm::vec3(5.0, 2.0, 5.0));
-		matrices.push_back(matrix);
-	}
-
+	//Add Grass
 	scene2.grass = new Vegitation(grass, *Texture::textures["grass"], scene2.terrain);
 
 	//Add magic boxes of levitation
@@ -209,20 +162,20 @@ int main()
 		
 		frame++;
 
-		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 		glUseProgram(ShaderManager::program2D);
 		glActiveTexture(GL_TEXTURE0);
 
-		Texture::textures["gColorRefl"]->bind();
-		bboard[0].draw();
-		//Texture::textures["gNormal"]->bind();
+		//Texture::textures["water_normal_map"]->bind();
+		//bboard[0].draw();
+		//Texture::textures["gColorRefl"]->bind();
 		//bboard[1].draw();
 		//Texture::textures[""]->bind();
 		//bboard[2].draw();
 		//Texture::textures["Refr"]->bind();
 		//bboard[3].draw();
 
-		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
 
 		Controls::update();
 

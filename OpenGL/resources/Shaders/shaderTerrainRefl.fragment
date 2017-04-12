@@ -1,17 +1,14 @@
 #version 430 core
 
-in vec3 FragCoord; // camera space
+in vec3 FragCoord;
 in vec3 Normal;
 in vec2 UV;
 
 in float Height;
 in float Slope;
 
-uniform uint isReflection;
-
 layout(location = 0)out vec3 outColor;
-layout(location = 1)out vec3 outNormal;
-layout(location = 2)out vec3 outPosition;
+layout(location = 1)out uvec4 outNormPos;
 
 layout(location = 3) uniform vec3 surfPosition;
 layout(location = 4) uniform vec3 surfNormal;
@@ -26,14 +23,20 @@ void main()
 		discard;
 
 	float noise = texture(noiseTex, UV/256).x;
+	noise /= 2;
+	noise += texture(noiseTex, UV/128).x;
+	noise /= 2;
+	noise += texture(noiseTex, UV/64).x;
 	noise /= 5;
 	noise += 0.9;
-	vec3 color = TerrainColor() * noise;
+	
+	outColor = TerrainColor() * noise;
 
-	outColor = color;
-	outNormal = Normal;
-	outPosition = FragCoord;
-
+	outNormPos = uvec4(0.0);
+	outNormPos.x = packHalf2x16(Normal.xy);
+	outNormPos.y = packHalf2x16(vec2(Normal.z, FragCoord.x));
+	outNormPos.z = packHalf2x16(FragCoord.yz);
+	outNormPos.a = floatBitsToUint(gl_FragCoord.z);
 }
 
 

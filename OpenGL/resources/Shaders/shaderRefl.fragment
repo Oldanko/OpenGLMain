@@ -5,8 +5,7 @@ in vec3 Normal;
 in vec2 TexCoord;
 
 layout(location = 0)out vec3 outColor;
-layout(location = 1)out vec3 outNormal;
-layout(location = 2)out vec3 outPosition;
+layout(location = 1)out uvec4 outNormPos;
 
 layout(location = 3) uniform vec3 surfPosition;
 layout(location = 4) uniform vec3 surfNormal;
@@ -21,9 +20,12 @@ void main()
 	if(dot(surfNormal, FragCoord - surfPosition) > 0)
 		discard;
 
-	vec3 color = texture(Texture, TexCoord).rgb;
-	
-	outColor = color;
-	outNormal = Normal;
-	outPosition = FragCoord;
+	outColor = texture(Texture, TexCoord).rgb;;
+
+	outNormPos = uvec4(0);
+	outNormPos.x = packHalf2x16(Normal.xy);
+	outNormPos.y = packHalf2x16(vec2(Normal.z, FragCoord.x));
+	outNormPos.z = packHalf2x16(FragCoord.yz);
+	outNormPos.a = floatBitsToUint(gl_FragCoord.z);
+
 }

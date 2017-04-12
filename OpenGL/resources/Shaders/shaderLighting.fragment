@@ -16,8 +16,6 @@ float ShadowCalculation(vec3 position, vec3 normal);
 void main()
 {
 		uvec4 data = texture(NormPos, UV).rgba;
-
-		//unpackHalf2x16();
 		vec2 temp = unpackHalf2x16(data.y);
 
 		vec3 normal = vec3(unpackHalf2x16(data.x), temp.x);
@@ -28,13 +26,13 @@ void main()
 
 		vec3 color = texture(Color, UV).rgb;
 
-
 		float diffuse = max(dot(normal, LightDirection), 0.0);
-		float ambient = 0.1f;
+		float ambient = 0.4f;
 	
 		gl_FragDepth = uintBitsToFloat(data.a);
 
 		outColor = vec4(color * diffuse * ShadowCalculation(position.xyz, normal) + color * ambient, 1.0f);
+		//outColor = vec4(normal, 1.0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
