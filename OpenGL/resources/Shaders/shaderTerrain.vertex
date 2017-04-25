@@ -14,10 +14,12 @@ out float Slope;
 layout(location = 0) uniform mat4 VP;
 layout(location = 1) uniform mat4 viewMatrix;
 
+layout(location = 3) uniform vec4 clipPlain;
+
 void main()
 {	
-	FragCoord = (viewMatrix * vec4(position.x, height, position.y, 1.0)).xyz;
-	Normal = normalize((viewMatrix * vec4(normal, 0.0)).xyz);
+	FragCoord = vec3(position.x, height, position.y);
+	Normal = normal;
 	UV = position;
 	
 	Height = height;
@@ -25,4 +27,5 @@ void main()
 
 	gl_Position = VP*vec4(position.x, height, position.y, 1);
 	
+	gl_ClipDistance[0] = dot(clipPlain, vec4(FragCoord, 1.0));
 }

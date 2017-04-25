@@ -8,10 +8,10 @@ class Mesh
 public:
 	Mesh();
 	Mesh(std::vector<float> &vertices, std::vector<unsigned int> &indices);
-	void bindVBO();
-	void bindEBO();
-	void draw();
-	GLuint indicesNum();
+	void bindVBO() const;
+	void bindEBO() const;
+	void draw() const;
+	GLuint indicesNum() const;
 	~Mesh();
 };
 

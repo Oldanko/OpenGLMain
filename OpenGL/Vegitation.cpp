@@ -19,7 +19,7 @@ ubyte elem[3][6] =
 ubyte mask[6] = { 1, 2, 2, 2, 1, 0 };
 
 const int grassPatch::q = 1024;
-const int grassPatch::size = 32;
+const int grassPatch::size = 16;
 glm::vec2 grassPatch::coords[q];
 
 void grassPatch::init()
@@ -166,7 +166,7 @@ void grassPatch::updateAsynch()
 		matrices[i][3][1] = height;
 
 		matrices[i] *= glm::rotate((float)atan(slope.x), glm::vec3(0, 0, 1))*
-			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2, 1.5, 2));
+			glm::rotate((float)atan(-slope.y), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1, 0.325, 1));
 	}
 
 

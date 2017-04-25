@@ -8,8 +8,8 @@ uniform sampler2D Color;
 uniform usampler2D NormPos;
 uniform sampler2D ShadowMap;
 
-layout(location = 3) uniform vec3 LightDirection;
-layout(location = 1) uniform mat4 ToLightMatrix;
+layout(location = 0) uniform mat4 ToLightMatrix;
+layout(location = 1) uniform vec3 LightDirection;
 
 float ShadowCalculation(vec3 position, vec3 normal);
 
@@ -32,7 +32,6 @@ void main()
 		gl_FragDepth = uintBitsToFloat(data.a);
 
 		outColor = vec4(color * diffuse * ShadowCalculation(position.xyz, normal) + color * ambient, 1.0f);
-		//outColor = vec4(normal, 1.0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

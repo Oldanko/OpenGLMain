@@ -22,20 +22,17 @@
     <Filter Include="Resource Files\Shaders\ShadowMapping">
       <UniqueIdentifier>{05ed729d-6ac8-4737-9516-15723a1f0e95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Deffered Path">
-      <UniqueIdentifier>{a83fc565-0585-4adc-93e6-387cdaf7b4bb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\GUI">
       <UniqueIdentifier>{d8fed3aa-b066-4a80-bd9e-c8b3801beb25}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Deffered Path\Reflection">
-      <UniqueIdentifier>{16768a87-9ca5-4f34-9319-bc20faf36a80}</UniqueIdentifier>
+    <Filter Include="Resource Files\Shaders\Deffered Geometry Path">
+      <UniqueIdentifier>{a83fc565-0585-4adc-93e6-387cdaf7b4bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Deffered Lighting Pass">
+      <UniqueIdentifier>{a890debe-d748-4636-b722-5bf774777438}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Controls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,14 +78,14 @@
     <ClCompile Include="Vegitation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PointOfView.cpp">
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraFreeFloat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Controls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -131,7 +128,10 @@
     <ClInclude Include="Vegitation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PointOfView.h">
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraFreeFloat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -145,19 +145,19 @@
       <Filter>Resource Files\Textures</Filter>
     </None>
     <None Include="resources\Shaders\shader.fragment">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shader.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shaderInstanced.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shaderTerrain.fragment">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shaderTerrain.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shader2D.fragment">
       <Filter>Resource Files\Shaders\GUI</Filter>
@@ -166,36 +166,27 @@
       <Filter>Resource Files\Shaders\GUI</Filter>
     </None>
     <None Include="resources\Shaders\shaderWater.fragment">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shaderWater.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderInstancedRefl.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderRefl.fragment">
-      <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderRefl.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderTerrainRefl.fragment">
-      <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
-    </None>
-    <None Include="resources\Shaders\shaderTerrainRefl.vertex">
-      <Filter>Resource Files\Shaders\Deffered Path\Reflection</Filter>
+      <Filter>Resource Files\Shaders\Deffered Geometry Path</Filter>
     </None>
     <None Include="resources\Shaders\shaderLighting.fragment">
-      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
+      <Filter>Resource Files\Shaders\Deffered Lighting Pass</Filter>
     </None>
     <None Include="resources\Shaders\shaderLighting.vertex">
+      <Filter>Resource Files\Shaders\Deffered Lighting Pass</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderDepth.vertex">
       <Filter>Resource Files\Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="resources\Shaders\shaderLightingRefl.fragment">
+    <None Include="resources\Shaders\shaderDepthInstanced.vertex">
       <Filter>Resource Files\Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="resources\Shaders\shaderLightingRefl.vertex">
+    <None Include="resources\Shaders\shaderEmpty.fragment">
+      <Filter>Resource Files\Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="resources\Shaders\shaderTerrainDepth.vertex">
       <Filter>Resource Files\Shaders\ShadowMapping</Filter>
     </None>
   </ItemGroup>

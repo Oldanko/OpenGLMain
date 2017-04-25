@@ -13,6 +13,6 @@ class NodeInstansed
 	Texture &m_texture;
 public:
 	NodeInstansed(Mesh &mesh, Texture &texture, std::vector<glm::mat4> &matrices);
-	void draw();
+	void draw() const;
 	~NodeInstansed();
 };

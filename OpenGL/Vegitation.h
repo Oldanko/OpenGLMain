@@ -55,7 +55,7 @@ public:
 	void updateAsynch();
 };
 
-const uint tilesNum = 6;
+const unsigned int tilesNum = 6;
 
 class Vegitation
 {

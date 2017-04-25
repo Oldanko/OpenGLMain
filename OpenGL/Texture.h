@@ -15,5 +15,5 @@ public:
 	Texture(const char * path, GLuint wrap_s, GLuint wrap_t, GLuint min_filter, GLuint mag_filter);
 	~Texture();
 
-	void bind();
+	void bind() const;
 };

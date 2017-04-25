@@ -65,8 +65,8 @@ public:
 
 	void update()
 	{
-		glm::vec2 mouse = glm::vec2(Controls::mouseCoords().x / WindowManager::width() * 2 - 1,
-			1 - Controls::mouseCoords().y / WindowManager::height() * 2);
+		glm::vec2 mouse = glm::vec2(Controls::x() / WindowManager::width() * 2 - 1,
+			1 - Controls::y() / WindowManager::height() * 2);
 
 		mouse.x > m_position.x && mouse.y > m_position.y &&
 			mouse.x < m_position.x + m_size.x && mouse.y < m_position.y + m_size.y
@@ -163,8 +163,8 @@ public:
 
 	void update()
 	{
-		glm::vec2 mouse = glm::vec2(Controls::mouseCoords().x / WindowManager::width() * 2 - 1,
-			1 - Controls::mouseCoords().y / WindowManager::height() * 2);
+		/*glm::vec2 mouse = glm::vec2(Controls::x() / WindowManager::width() * 2 - 1,
+			1 - Controls::y() / WindowManager::height() * 2);
 
 		if (mouse.x > m_position.x && mouse.y > m_position.y &&
 			mouse.x < m_position.x + m_size && mouse.y < m_position.y + 0.01 &&
@@ -179,7 +179,7 @@ public:
 			:
 			0;
 
-		Controls::mouseInputs();
+		Controls::mouseInputs();*/
 	}
 
 	GLfloat value()

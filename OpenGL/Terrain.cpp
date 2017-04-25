@@ -114,14 +114,14 @@ float * Terrain::getGrid()
 	return grid;
 }
 
-void Terrain::draw()
+void Terrain::draw() const
 {
 	noise.bind();
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, (m_size - 1)*(m_size - 1) * 6, GL_UNSIGNED_INT, 0);
 }
 
-float Terrain::findHeight(glm::vec2 position)
+float Terrain::findHeight(const glm::vec2& position) const
 {
 	float X = floor(position.x);
 	float Y = floor(position.y);
@@ -149,7 +149,7 @@ float Terrain::findHeight(glm::vec2 position)
 	return result;
 }
 
-glm::vec2 Terrain::findSlope(glm::vec2 position)
+const glm::vec2& Terrain::findSlope(const glm::vec2& position) const
 {
 	float X = floor(position.x);
 	float Y = floor(position.y);

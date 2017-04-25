@@ -5,7 +5,6 @@
 #include <glm\gtx\transform.hpp>
 #include "Texture.h"
 
-
 glm::vec3 intersection(glm::vec3 p1, glm::vec3 v1, glm::vec3 p2, glm::vec3 v2)
 {
 	float k = (v2.y*(p2.x - p1.x) + v2.x*(p1.y - p2.y)) / (v1.x*v2.y - v1.y*v2.x);
@@ -170,14 +169,17 @@ void Water::bindRefractionTexture()
 	//glBindTexture(GL_TEXTURE_2D, m_refractionTex);
 }
 
-void Water::calculateMatrices(Camera & camera)
+void Water::calculateMatrices(const POV pov)
 {
-	glm::vec3 target = camera.position();
-	glm::vec3 POV = camera.cameraGlobalPosition();
+	glm::vec3 position = pov.position;
+	glm::vec3 direction = pov.direction;
+
+	position.y = m_height + m_height - position.y;
+	direction.y = -direction.y;
 
 	m_reflectionMatrix = glm::lookAt(
-		glm::vec3(POV.x, m_height + m_height - POV.y, POV.z),
-		glm::vec3(target.x, m_height + m_height - target.y, target.z),
+		position,
+		position + direction,
 		glm::vec3(0, -1, 0)
 		);
 }

@@ -17,7 +17,7 @@ Mesh::Mesh(std::vector<float> &vertices, std::vector<unsigned int> &indices)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), &indices[0], GL_STATIC_DRAW);
 }
 
-void Mesh::bindVBO()
+void Mesh::bindVBO() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -29,23 +29,20 @@ void Mesh::bindVBO()
 
 }
 
-void Mesh::bindEBO()
+void Mesh::bindEBO() const
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
 		glDrawElements(GL_TRIANGLES, m_indicesNum, GL_UNSIGNED_INT, 0);
 	}
 	
-GLuint Mesh::indicesNum()
+GLuint Mesh::indicesNum() const
 {	
 	return m_indicesNum;
 }
-
-
-
 
 
 Mesh::~Mesh()

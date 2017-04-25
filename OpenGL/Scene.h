@@ -6,29 +6,24 @@
 #include "Camera.h"
 #include "Water.h"
 #include "Vegitation.h"
-#include "PointOfView.h"
 
 class Scene
 {
 public:
 
-	Camera camera;
-
-	PointOfView pov;
+	Camera *camera;
 	
 	Terrain terrain;
-	Water * water;
+	Water* water;
 	std::vector<Node*> solidObjects;
 	std::vector<Node*> glowingObjects;
-
-	Vegitation * grass;
 	std::vector<NodeInstansed*> solidObjectsInstanced;
+	Vegitation *grass;
+
 	glm::mat4 lightMatrix;
 	glm::vec3 SunDirection;
 
-
 	void update();
-	void powUpdate();
 
 	Scene();
 	~Scene();

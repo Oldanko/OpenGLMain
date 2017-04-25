@@ -10,7 +10,7 @@ float WindowManager::m_FoV = 0.0f;
 float WindowManager::m_lastTime = 0;
 float WindowManager::m_timeDelta = 0;
 
-glm::mat4 WindowManager::m_projectionMatrix = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 1.0f, 100000.0f);
+glm::mat4 WindowManager::m_projectionMatrix = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 0.1f, 10000.0f);
 
 
 void WindowManager::init()
@@ -32,7 +32,7 @@ void WindowManager::init()
 	m_height = 720;
 	m_FoV = 70.0f;
 
-	m_projectionMatrix = glm::perspective(glm::radians(m_FoV), (float)m_width / m_height, 1.0f, 100000.0f);
+	m_projectionMatrix = glm::perspective(glm::radians(m_FoV), (float)m_width / m_height, 0.1f, 10000.0f);
 
 	m_window = glfwCreateWindow(m_width, m_height, "OpenGL Engine", NULL, NULL);
 	if (m_window == NULL) {

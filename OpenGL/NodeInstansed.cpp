@@ -32,7 +32,7 @@ NodeInstansed::NodeInstansed(Mesh & mesh, Texture & texture, std::vector<glm::ma
 	glBindVertexArray(0);
 }
 
-void NodeInstansed::draw()
+void NodeInstansed::draw() const
 {
 	m_texture.bind();
 	glBindVertexArray(vao);

@@ -134,7 +134,7 @@ Texture::Texture(const char * path, GLuint wrap_s, GLuint wrap_t, GLuint min_fil
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::bind()
+void Texture::bind() const
 {
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 }

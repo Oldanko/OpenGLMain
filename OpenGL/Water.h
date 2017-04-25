@@ -3,6 +3,8 @@
 #include <GL\glew.h>
 #include "Camera.h"
 
+struct POV;
+
 class Water
 {
 	glm::vec2 m_A, m_B;
@@ -19,7 +21,7 @@ public:
 	void PrepareFrameBuffer();
 	void bindReflectionTexture();
 	void bindRefractionTexture();
-	void calculateMatrices(Camera & camera);
+	void calculateMatrices(const POV pov);
 	float height();
 	void draw();	
 	void setHeight(float height) { m_height = height; }

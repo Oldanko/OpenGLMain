@@ -10,10 +10,7 @@ public:
 	static GLuint programInstanced;
 	static GLuint programTerrain;
 	static GLuint programWater;
-
-	static GLuint programReflection;
-	static GLuint programInstancedReflection;
-	static GLuint programTerrainReflection;
+	
 
 	static GLuint programDepth;
 	static GLuint programInstancedDepth;
@@ -22,8 +19,6 @@ public:
 	static GLuint program2D;
 	
 	static GLuint programLighting;
-	static GLuint programLightingReflection;
-
 
 	static void init();
 	static void terminate();

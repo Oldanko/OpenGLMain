@@ -2,19 +2,18 @@
 
 out vec2 UV;
 
+layout(location = 2)uniform vec2 UVx;
+
 void main()
 {
-	vec2 uv[] = 
-	{ 
-		vec2(0, 1), vec2(0, 0), vec2(1, 1), vec2(1, 0)
-	};
+	vec2 UVy = vec2(1, 0) ;
 
 	vec2 position[] = 
 	{ 
 		vec2(-1, 1), vec2(-1, -1), vec2(1, 1), vec2(1, -1)
 	};
 
-	UV = uv[gl_VertexID];
+	UV = vec2(UVx[gl_VertexID/2], UVy[gl_VertexID%2]);
 
 	gl_Position = vec4(position[gl_VertexID], 0.0f, 1.0f);
 }

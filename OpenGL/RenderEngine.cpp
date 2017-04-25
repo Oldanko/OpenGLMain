@@ -1,5 +1,6 @@
 #include "RenderEngine.h"
 #include "ShaderManager.h"
+#include "WindowManager.h"
 
 #include <ctime>
 
@@ -27,8 +28,11 @@ void RenderEngine::renderSolids(Scene & scene, glm::mat4 & matrix)
 
 	glUseProgram(*program);
 
+	glm::vec4 clipPlain(0, 1, 0, -scene.water->height());
+	glUniform4fv(3, 1, &clipPlain[0]);
+
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera->matrix()[0][0]);
 
 	for (int i = 0; i < scene.solidObjects.size(); i++)
 	{
@@ -45,8 +49,11 @@ void RenderEngine::renderInstanced(Scene & scene, glm::mat4 & matrix)
 
 	glUseProgram(*program);
 
+	glm::vec4 clipPlain(0, 1, 0, -scene.water->height());
+	glUniform4fv(3, 1, &clipPlain[0]);
+
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera->matrix()[0][0]);
 
 	for (int i = 0; i < scene.solidObjectsInstanced.size(); i++)
 	{
@@ -55,8 +62,6 @@ void RenderEngine::renderInstanced(Scene & scene, glm::mat4 & matrix)
 
 	glDisable(GL_CULL_FACE);
 	scene.grass->draw();
-	//for (int i = 0; i < scene.grass.size(); i++)
-		//scene.grass[i]->draw();
 	glEnable(GL_CULL_FACE);
 }
 
@@ -67,8 +72,11 @@ void RenderEngine::renderTerrain(Scene &scene, glm::mat4 &matrix)
 
 	glUseProgram(*program);
 
+	glm::vec4 clipPlain(0, 1, 0, -scene.water->height());
+	glUniform4fv(3, 1, &clipPlain[0]);
+
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera->matrix()[0][0]);
 
 	scene.terrain.draw();
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -82,76 +90,18 @@ void RenderEngine::renderWater(Scene & scene, glm::mat4 & matrix)
 	glUseProgram(*program);
 
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera.ViewMatrix()[0][0]);
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.camera->matrix()[0][0]);
 	glUniform1f(2, 1.4f);
 
 
 
-	glUniform3fv(4, 1, &glm::normalize(glm::vec3(scene.camera.ViewMatrix() * glm::vec4(scene.SunDirection, 0.0)))[0]);
+	glUniform3fv(4, 1, &glm::normalize(glm::vec3(scene.camera->matrix() * glm::vec4(scene.SunDirection, 0.0)))[0]);
 	long double sysTime = time(0);
 	glUniform1f(5, 1);
 
 	scene.water->draw();
 
 
-}
-
-void RenderEngine::renderSolidsReflection(Scene & scene, glm::mat4 & matrix)
-{
-	glUseProgram(ShaderManager::programReflection);
-
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.water->m_reflectionMatrix[0][0]);
-	
-	glm::vec3 surfNormal = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, -1, 0, 0));
-	glm::vec3 surfPosition = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, 1.4, 0, 1));
-	glUniform3fv(3, 1, &surfPosition[0]);
-	glUniform3fv(4, 1, &surfNormal[0]);
-
-	for (int i = 0; i < scene.solidObjects.size(); i++)
-	{
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &scene.solidObjects[i]->getModelMatrix()[0][0]);
-		scene.solidObjects[i]->draw();
-	}
-
-}
-
-void RenderEngine::renderInstancedReflection(Scene & scene, glm::mat4 & matrix)
-{
-	glUseProgram(ShaderManager::programInstancedReflection);
-
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.water->m_reflectionMatrix[0][0]);
-	
-	glm::vec3 surfNormal = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, -1, 0, 0));
-	glm::vec3 surfPosition = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, 1.4, 0, 1));
-	glUniform3fv(3, 1, &surfPosition[0]);
-	glUniform3fv(4, 1, &surfNormal[0]);
-
-	for (int i = 0; i < scene.solidObjectsInstanced.size(); i++)
-	{
-		scene.solidObjectsInstanced[i]->draw();
-	}
-
-	glDisable(GL_CULL_FACE);
-	scene.grass->draw();
-	glEnable(GL_CULL_FACE);
-}
-
-void RenderEngine::renderTerrainReflection(Scene &scene, glm::mat4 &matrix)
-{
-	glUseProgram(ShaderManager::programTerrainReflection);
-	
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &matrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &scene.water->m_reflectionMatrix[0][0]);
-	
-	glm::vec3 surfNormal = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, -1, 0, 0));
-	glm::vec3 surfPosition = glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(0, 1.4, 0, 1));
-	glUniform3fv(3, 1, &surfPosition[0]);
-	glUniform3fv(4, 1, &surfNormal[0]);
-
-	scene.terrain.draw();
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void RenderEngine::renderShadowMap(Scene & scene)
@@ -235,16 +185,6 @@ void RenderEngine::init()
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormPos, 0);
 
-	/*glGenTextures(1, &gPosition);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WindowManager::width(), WindowManager::height(), 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gPosition, 0);*/
 
 	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, attachments);
@@ -280,21 +220,6 @@ void RenderEngine::init()
 	glUniform1i(glGetUniformLocation(ShaderManager::programWater, "Reflection"), 3);
 	glUniform1i(glGetUniformLocation(ShaderManager::programWater, "NormalMap"), 4);
 
-	glUseProgram(ShaderManager::programLightingReflection);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "Color"), 0);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "NormPos"), 1);
-	glUniform1i(glGetUniformLocation(ShaderManager::programLightingReflection, "ShadowMap"), 2);
-
-
-	glUseProgram(ShaderManager::programReflection);
-	glUniform1i(glGetUniformLocation(ShaderManager::programReflection, "Texture"), 0);
-
-	glUseProgram(ShaderManager::programInstancedReflection);
-	glUniform1i(glGetUniformLocation(ShaderManager::programInstancedReflection, "Texture"), 0);
-
-	glUseProgram(ShaderManager::programTerrainReflection);
-	glUniform1i(glGetUniformLocation(ShaderManager::programTerrainReflection, "noiseTex"), 0);
-
 	glUseProgram(0);
 }
 
@@ -318,7 +243,53 @@ void RenderEngine::render(Scene & scene)
 
 	glm::mat4 VP;
 
-	VP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
+
+	// /////////////////////////////////////
+	
+	VP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_gFBO);
+	glViewport(0, 0, WindowManager::width(), WindowManager::height());
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_CLIP_PLANE0);
+
+	renderSolids(scene, VP);
+	renderInstanced(scene, VP);
+	renderTerrain(scene, VP);
+	glDisable(GL_CLIP_PLANE0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo);
+	glViewport(0, 0, WindowManager::width(), WindowManager::height());
+
+	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(ShaderManager::programLighting);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, scene.water->m_gTex[0]);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, scene.water->m_gTex[1]);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+
+	glUniformMatrix4fv(1, 1, GL_FALSE, &(scene.lightMatrix * glm::inverse(scene.water->m_reflectionMatrix))[0][0]);
+	glUniform3fv(3, 1, &glm::normalize(glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(scene.SunDirection, 0.0)))[0]);
+	glUniform2f(2, 1, 0);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	
+	// /////////////////////////////////////
+
+
+	VP = WindowManager::projectionMatrix() * scene.camera->matrix();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, gFBO);
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
@@ -333,51 +304,6 @@ void RenderEngine::render(Scene & scene)
 	renderSolids(scene, VP);
 	renderInstanced(scene, VP);
 	renderTerrain(scene, VP);
-
-	// /////////////////////////////////////
-
-	VP = WindowManager::projectionMatrix() * scene.water->m_reflectionMatrix;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_gFBO);
-	glViewport(0, 0, WindowManager::width(), WindowManager::height());
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-
-
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-	renderTerrainReflection(scene, VP);
-	renderSolidsReflection(scene, VP);
-	renderInstancedReflection(scene, VP);
-
-
-	glBindFramebuffer(GL_FRAMEBUFFER, scene.water->m_fbo);
-	glViewport(0, 0, WindowManager::width(), WindowManager::height());
-	
-	glClearColor(11 / 255.0, 176 / 255.0, 226 / 255.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(ShaderManager::programLightingReflection);
-	//glUseProgram(ShaderManager::programLighting);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, scene.water->m_gTex[0]);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, scene.water->m_gTex[1]);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, shadowMap);
-
-	glUniformMatrix4fv(1, 1, GL_FALSE, &(scene.lightMatrix * glm::inverse(scene.water->m_reflectionMatrix))[0][0]);
-	glUniform3fv(3, 1, &glm::normalize(glm::vec3(scene.water->m_reflectionMatrix * glm::vec4(scene.SunDirection, 0.0)))[0]);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	// /////////////////////////////////////
-
-
-	VP = WindowManager::projectionMatrix() * scene.camera.ViewMatrix();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WindowManager::width(), WindowManager::height());
@@ -397,14 +323,15 @@ void RenderEngine::render(Scene & scene)
 	glActiveTexture(GL_TEXTURE4);
 	Texture::textures["water_normal_map"]->bind();
 
+	glUniformMatrix4fv(0, 1, GL_FALSE, &(scene.lightMatrix)[0][0]);
+	glUniform3fv(1, 1, &glm::normalize(scene.SunDirection)[0]);
+	glUniform2f(2, 0, 1);
 
-	glUniform3fv(LightDirectionID, 1, &glm::normalize(glm::vec3(scene.camera.ViewMatrix() * glm::vec4(scene.SunDirection, 0.0)))[0]);
-	glUniformMatrix4fv(1, 1, GL_FALSE, &(scene.lightMatrix * inverse(scene.camera.ViewMatrix()))[0][0]);
-	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	renderWater(scene, VP);
+	glDisable(GL_BLEND);
 
 }

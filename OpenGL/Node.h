@@ -21,29 +21,26 @@ protected:
 	Texture& m_texture;
 public:
 
-
-
-
 	Node(Mesh &mesh, Texture& texture);
 	Node(Mesh &mesh, Texture& texture,
 		glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 
-	void setPosition(glm::vec3 v);
-	void setRotation(glm::vec3 v);
-	void setScale(glm::vec3 v);
+	void setPosition(const glm::vec3& v);
+	void setRotation(const glm::vec3& v);
+	void setScale(const glm::vec3& v);
 
-	glm::vec3 getPosition();
-	glm::vec3 getRotation();
-	glm::vec3 getScale();
+	const glm::vec3& getPosition() const;
+	const glm::vec3& getRotation() const;
+	const glm::vec3& getScale() const;
 
-	glm::mat4 getModelMatrix();
+	glm::mat4 getModelMatrix() const;
 
-	void move(glm::vec3 v);
-	void rotate(glm::vec3 v);
-	void scale(glm::vec3 v);
+	void move(const glm::vec3& v);
+	void rotate(const glm::vec3& v);
+	void scale(const glm::vec3& v);
 
 	void calculateMatrices();
-	void draw();
+	void draw() const;
 	~Node();
 };
 

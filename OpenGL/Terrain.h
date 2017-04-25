@@ -9,6 +9,7 @@ class Terrain
 	float * m_heightmap;
 	GLuint m_vao, m_ebo;
 	GLuint m_vbo[2];
+
 	float * getGrid();
 	unsigned int * indexicate();
 public:
@@ -17,9 +18,11 @@ public:
 	Terrain(const char * heightmap);
 	~Terrain();
 	bool loadHeightMap(const char * path);
-	void draw();
-	float findHeight(glm::vec2 position);
-	glm::vec2 findSlope(glm::vec2 position);
-	unsigned int size() { return m_size; }
+	void draw() const;
+
+	float findHeight(const glm::vec2& position) const;
+	const glm::vec2& findSlope(const glm::vec2& position) const;
+	
+	unsigned int size() const { return m_size; }
 };
 

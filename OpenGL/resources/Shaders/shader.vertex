@@ -11,13 +11,16 @@ out vec2 TexCoord;
 layout(location = 0) uniform mat4 VP;
 layout(location = 1) uniform mat4 viewMatrix;
 layout(location = 2) uniform mat4 modelMatrix;
+layout(location = 3) uniform vec4 clipPlain;
 
 void main()
 {
 	vec4 worldSpaceCoords = modelMatrix * vec4(position, 1);
-	FragCoord = (viewMatrix * worldSpaceCoords).xyz;
+	FragCoord = worldSpaceCoords.xyz;
 	TexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	Normal = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normal);
+	Normal = normalize(mat3(transpose(inverse(modelMatrix))) * normal);
 	
 	gl_Position = VP * worldSpaceCoords;
+
+	gl_ClipDistance[0] = dot(clipPlain, worldSpaceCoords);
 }

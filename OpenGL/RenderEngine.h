@@ -25,16 +25,10 @@ class RenderEngine
 	static void renderTerrain(Scene &scene, glm::mat4 &matrix);
 	static void renderWater(Scene &scene, glm::mat4 &matrix);
 
-	static void renderSolidsReflection(Scene &scene, glm::mat4 &matrix);
-	static void renderInstancedReflection(Scene &scene, glm::mat4 &matrix);
-	static void renderTerrainReflection(Scene &scene, glm::mat4 &matrix);
-
 	static void renderShadowMap(Scene & scene);
 public:
 	static void init();
 	static void terminate();
-	/*static void draw(Scene & scene);
-	static void drawShaded(Scene & scene);*/
 	static void render(Scene & scene);
 };
 

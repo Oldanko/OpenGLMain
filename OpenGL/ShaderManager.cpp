@@ -10,14 +10,9 @@ GLuint ShaderManager::programInstanced = 0;
 GLuint ShaderManager::programTerrain = 0;
 GLuint ShaderManager::programWater = 0;
 
-GLuint ShaderManager::programReflection = 0;
-GLuint ShaderManager::programInstancedReflection = 0;
-GLuint ShaderManager::programTerrainReflection = 0;
-
 GLuint ShaderManager::program2D = 0;
 
 GLuint ShaderManager::programLighting = 0;
-GLuint ShaderManager::programLightingReflection = 0;
 
 GLuint ShaderManager::programDepth = 0;
 GLuint ShaderManager::programInstancedDepth = 0;
@@ -30,15 +25,10 @@ void ShaderManager::init()
 	programInstanced = LoadShaders("resources/shaders/shaderInstanced.vertex", "resources/shaders/shader.fragment");
 	programTerrain = LoadShaders("resources/shaders/shaderTerrain.vertex", "resources/shaders/shaderTerrain.fragment");
 	programWater = LoadShaders("resources/shaders/shaderWater.vertex", "resources/shaders/shaderWater.fragment");
-
-	programReflection = LoadShaders("resources/shaders/shaderRefl.vertex", "resources/shaders/shaderRefl.fragment");
-	programInstancedReflection = LoadShaders("resources/shaders/shaderInstancedRefl.vertex", "resources/shaders/shaderRefl.fragment");
-	programTerrainReflection = LoadShaders("resources/shaders/shaderTerrainRefl.vertex", "resources/shaders/shaderTerrainRefl.fragment");
-
+	
 	program2D = LoadShaders("resources/shaders/shader2D.vertex", "resources/shaders/shader2D.fragment");
 
 	programLighting = LoadShaders("resources/shaders/shaderLighting.vertex", "resources/shaders/shaderLighting.fragment");
-	programLightingReflection = LoadShaders("resources/shaders/shaderLightingRefl.vertex", "resources/shaders/shaderLightingRefl.fragment");
 
 	programDepth = LoadShaders("resources/shaders/shaderDepth.vertex", "resources/shaders/shaderEmpty.fragment");
 	programInstancedDepth = LoadShaders("resources/shaders/shaderDepthInstanced.vertex", "resources/shaders/shaderEmpty.fragment");
@@ -51,10 +41,6 @@ void ShaderManager::terminate()
 	glDeleteProgram(program);
 	glDeleteProgram(programInstanced);
 	glDeleteProgram(programTerrain);
-
-	glDeleteProgram(programReflection);
-	glDeleteProgram(programInstancedReflection);
-	glDeleteProgram(programTerrainReflection);
 
 	glDeleteProgram(programDepth);
 	glDeleteProgram(programInstancedDepth);

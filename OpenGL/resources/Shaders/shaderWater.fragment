@@ -57,10 +57,11 @@ void main()
 
 	//Normal = normalize(TBN * Normal);
 
-	float depth = linearZ(uintBitsToFloat(data.a)) - linearZ(gl_FragCoord.z);
-
+	float depth = linearZ(uintBitsToFloat(data.a)) - linearZ(gl_FragCoord.z);//uintBitsToFloat(data.a) - gl_FragCoord.z;
 
 	uv += (Normal.rb*0.02)*clamp(depth/10, 0, 1);
+
+	//depth = linearZ(uintBitsToFloat(data.a)) - linearZ(gl_FragCoord.z);
 
 	vec3 reflection = texture(Reflection, uv).rgb;
 

@@ -124,12 +124,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraFreeFloat.cpp" />
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="NodeInstansed.cpp" />
-    <ClCompile Include="PointOfView.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -143,12 +143,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraFreeFloat.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="NodeInstansed.h" />
-    <ClInclude Include="PointOfView.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderManager.h" />
@@ -167,18 +167,15 @@
     <None Include="resources\Shaders\shader.vertex" />
     <None Include="resources\Shaders\shader2D.fragment" />
     <None Include="resources\Shaders\shader2D.vertex" />
+    <None Include="resources\Shaders\shaderDepth.vertex" />
+    <None Include="resources\Shaders\shaderDepthInstanced.vertex" />
+    <None Include="resources\Shaders\shaderEmpty.fragment" />
     <None Include="resources\Shaders\shaderInstanced.vertex" />
-    <None Include="resources\Shaders\shaderInstancedRefl.vertex" />
     <None Include="resources\Shaders\shaderLighting.fragment" />
     <None Include="resources\Shaders\shaderLighting.vertex" />
-    <None Include="resources\Shaders\shaderLightingRefl.fragment" />
-    <None Include="resources\Shaders\shaderLightingRefl.vertex" />
-    <None Include="resources\Shaders\shaderRefl.fragment" />
-    <None Include="resources\Shaders\shaderRefl.vertex" />
     <None Include="resources\Shaders\shaderTerrain.fragment" />
     <None Include="resources\Shaders\shaderTerrain.vertex" />
-    <None Include="resources\Shaders\shaderTerrainRefl.fragment" />
-    <None Include="resources\Shaders\shaderTerrainRefl.vertex" />
+    <None Include="resources\Shaders\shaderTerrainDepth.vertex" />
     <None Include="resources\Shaders\shaderWater.fragment" />
     <None Include="resources\Shaders\shaderWater.vertex" />
     <None Include="resources\Textures\Textures.ls" />

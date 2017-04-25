@@ -27,57 +27,57 @@ Node::Node(Mesh & mesh, Texture & texture, glm::vec3 position, glm::vec3 rotatio
 	calculateMatrices();
 }
 
-void Node::setPosition(glm::vec3 v)
+void Node::setPosition(const glm::vec3& v)
 {
 	m_position = v; 
 	m_matrixShouldBeCalculated = true;
 }
 
-void Node::setRotation(glm::vec3 v)
+void Node::setRotation(const glm::vec3& v)
 {
 	m_rotation = v;
 	m_matrixShouldBeCalculated = true;
 }
 
-void Node::setScale(glm::vec3 v)
+void Node::setScale(const glm::vec3& v)
 {
 	m_scale = v;
 	m_matrixShouldBeCalculated = true;
 }
 
-glm::vec3 Node::getPosition()
+const glm::vec3& Node::getPosition() const
 {
 	return m_position;
 }
 
-glm::vec3 Node::getRotation()
+const glm::vec3& Node::getRotation() const
 {
 	return m_rotation;
 }
 
-glm::vec3 Node::getScale()
+const glm::vec3& Node::getScale() const
 {
 	return m_scale;
 }
 
-glm::mat4 Node::getModelMatrix()
+glm::mat4 Node::getModelMatrix() const
 {
 	return m_modelMatrix;
 }
 
-void Node::move(glm::vec3 v)
+void Node::move(const glm::vec3& v)
 {
 	m_position += v;
 	m_matrixShouldBeCalculated = true;
 }
 
-void Node::rotate(glm::vec3 v)
+void Node::rotate(const glm::vec3& v)
 {
 	m_rotation += v;
 	m_matrixShouldBeCalculated = true;
 }
 
-void Node::scale(glm::vec3 v)
+void Node::scale(const glm::vec3& v)
 {
 	m_scale += v;
 	m_matrixShouldBeCalculated = true;
@@ -95,7 +95,7 @@ void Node::calculateMatrices()
 			* glm::scale(m_scale);
 }
 
-void Node::draw()
+void Node::draw() const
 {
 	m_texture.bind();
 	glBindVertexArray(m_vao);
